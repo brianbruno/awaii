@@ -8,6 +8,15 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.toastr = require('toastr');
+window.Echo = require('laravel-echo');
+window.Pusher = require('pusher-js');
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'a5fe158fb56fbce65308',
+    cluster: 'us2',
+    encrypted: true
+});
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -16,6 +25,8 @@ window.Vue = require('vue');
  */
 
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
+Vue.component('fila', require('./components/Fila.vue'));
+Vue.component('notification', require('./components/Notification.vue'));
 
 const app = new Vue({
     el: '#app'

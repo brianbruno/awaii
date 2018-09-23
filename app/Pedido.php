@@ -23,4 +23,8 @@ class Pedido extends Model {
         }
         return 'R$' . number_format($valor, 2, ',', '.');
     }
+
+    public static function pedidosPendentes() {
+        return Pedido::where('status', '<>', 'FINALIZADO')->count();
+    }
 }

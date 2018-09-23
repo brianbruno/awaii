@@ -11,7 +11,7 @@ class ItemPedido extends ModelMPK {
     public $incrementing = false;
 
     public function pedido() {
-        return $this->belongsTo(Pedido::class, 'id', 'ide_pedido');
+        return $this->belongsTo(Pedido::class, 'id_pedido', 'id');
     }
 
     public function produto() {
@@ -24,5 +24,14 @@ class ItemPedido extends ModelMPK {
 
     public function getTotalAttribute($value) {
         return 'R$' . number_format($value, 2, ',', '.');
+    }
+
+    public function getDataAttribute($value) {
+        return date('d/m/Y H:i:s', strtotime($this->dtpedido));
+    }
+
+    public static function getProducaoPendente() {
+        return ItemPedido::where('status', '<>', 'ENTREGUE')
+                         ->where('status', '<>', 'PRODUZIDO')->get();
     }
 }

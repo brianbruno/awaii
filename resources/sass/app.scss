@@ -4,8 +4,16 @@
 
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
+@import '~toastr/build/toastr.min.css';
+
 // Variables
 @import 'variables';
+
+$theme-colors: (
+    'deeporange-darken4': #bf360c,
+    'red-lighten3': #ef9a9a,
+    'green-lighten3': #a5d6a7
+);
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';

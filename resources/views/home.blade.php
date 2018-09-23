@@ -13,9 +13,18 @@
                                 {{ session('status') }}
                             </div>
                         @endif
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">
+                                <div class="card text-white bg-deeporange-darken4" >
+                                    <div class="card-header">Pedidos pendentes</div>
+                                    <div class="card-body text-center">
+                                        <h1 class="card-title"><strong>{{ App\Pedido::pedidosPendentes() }}</strong></h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                        <a class="btn btn-primary btn-lg" href="{{ route('produtos') }}">Cadastrar produto</a>
-                        <button type="button" class="btn btn-primary btn-lg">Novo pedido</button>
+
                     </div>
                 </div>
             </div>

@@ -58,8 +58,10 @@
                             Pedido
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ route('pedidos') }}">Pedidos <span class="badge badge-danger font-weight-light"> {{ \App\Pedido::where('status', '<>', 'FINALIZADO')->count() }}</span></a>
+                            <a class="dropdown-item" href="{{ route('pedidos') }}">Pedidos <span class="badge badge-danger font-weight-light"> {{ \App\Pedido::pedidosPendentes() }}</span></a>
                             <a class="dropdown-item" href="{{ route('cadastrar-pedido') }}">Novo Pedido</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ route('producao') }}">Produção</a>
                         </div>
                     </li>
                 </ul>

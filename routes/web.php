@@ -50,10 +50,25 @@ Route::namespace('Pedido')->group(function () {
         Route::get('', 'PedidoController@index')->name('pedidos')->middleware('auth');
         Route::get('/{id}','PedidoController@infoPedido')->where(['id' => '[0-9]+'])->name('pedido-id')->middleware('auth');
         Route::get('cadastro', 'PedidoController@cadastrarIndex')->middleware('auth');
-        Route::get('/finalizar/{id}',  'PedidoController@finalizarPedido')->name('finalizar-pedido')->middleware('auth');
+        Route::get('finalizar/{id}',  'PedidoController@finalizarPedido')->name('finalizar-pedido')->middleware('auth');
+        Route::get('export', 'PedidoController@export')->name('exportar-pedidos')->middleware('auth');
         Route::post('cadastro/item',  'PedidoController@cadastrarItem')->name('cadastrar-item')->middleware('auth');
         Route::post('cadastro',  'PedidoController@cadastrar')->name('cadastrar-pedido')->middleware('auth');
 
     });
 
 });
+
+Route::namespace('Producao')->group(function () {
+
+    Route::prefix('producao')->group(function () {
+
+        Route::get('{message?}', 'ProducaoController@index')->name('producao')->middleware('auth');
+        Route::get('/{id_pedido}/{id_item}', 'ProducaoController@finalizarItem')->where(['id_pedido' => '[0-9]+', 'id_item' => '[0-9]+'])
+             ->name('finalizar-item')->middleware('auth');
+
+    });
+
+});
+
+Route::view('fila', 'cliente.index');

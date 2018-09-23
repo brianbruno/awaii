@@ -22,6 +22,9 @@
                                 Item registrado com sucesso!
                             </div>
                         @endif
+                        @if (!empty($message))
+                            <notification mensagem="{{ $message }}" tipo="erro" titulo="Erro!"></notification>
+                        @endif
                         <form id="form" method="POST" action="{{ route('cadastrar-item') }}" class="form-inline">
                             @csrf
                             <input type="text" hidden id="id_pedido" name="id_pedido" value="{{ $pedido->id }}">
@@ -51,7 +54,7 @@
                             </thead>
                             <tbody>
                             @foreach ($pedido->itens()->get() as $item)
-                                <tr>
+                                <tr class="{{ $item->status != 'PRODUZIDO' ? 'bg-red-lighten3' : 'bg-green-lighten3'}}">
                                     <td>{{ $item->produto()->get()[0]->nmproduto }}</td>
                                     <td>{{ $item->quantidade.' ('.$item->produto()->get()[0]->unidade.')' }}</td>
                                     <td>{{ $item->preco }}</td>

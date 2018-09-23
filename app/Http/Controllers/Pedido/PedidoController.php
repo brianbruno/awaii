@@ -9,12 +9,14 @@
 namespace App\Http\Controllers\Pedido;
 
 use App\Cliente;
+use App\Events\PedidoEntregue;
 use App\ItemPedido;
 use App\Pedido;
 use App\Produto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use App\Exports\PedidosExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PedidoController {
 
@@ -85,7 +87,7 @@ class PedidoController {
 
             $itemPedido = new ItemPedido();
             $itemPedido->id_pedido = $pedido->id;
-            $itemPedido->sequencial = sizeof(ItemPedido::where('id_pedido', $request->id_pedido)->count())+1;
+            $itemPedido->sequencial = ItemPedido::where('id_pedido', $request->id_pedido)->count() + 1;
             $itemPedido->cdproduto = $produto->cdproduto;
             $itemPedido->quantidade = $request->quantidade;
             $itemPedido->preco = $produto->preco;
@@ -105,11 +107,27 @@ class PedidoController {
 
     public function finalizarPedido($id) {
         $pedido = Pedido::find($id);
-
+        $return = null;
         $pedido->status = 'FINALIZADO';
-        $pedido->save();
 
-        return redirect()->route('pedidos');
+        $itens = $pedido->itens()->where('status', '<>', 'PRODUZIDO')->count();
+
+        if ($itens == 0) {
+            $pedido->save();
+            $pedido->itens()->update(['status' => 'ENTREGUE']);
+            event(new PedidoEntregue($pedido));
+            $return = redirect()->route('pedidos');
+        } else {
+            $mensagem = 'Não foi possível finalizar esse pedido. Nem todos os itens foram produzidos.';
+            $view = 'system.pedido.pedido';
+
+            $return = view($view, ['pedido' => Pedido::find($id), 'produtos' => Produto::all(), 'message' => $mensagem]);
+        }
+        return $return;
+    }
+
+    public function export(){
+        return Excel::download(new PedidosExport, 'pedidos-'.date('d-m-Y-Hi').'.xlsx');
     }
 
 }
