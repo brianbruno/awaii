@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Pedido;
 
 use App\Cliente;
 use App\Events\PedidoEntregue;
+use App\Events\PedidoRealizado;
 use App\ItemPedido;
 use App\Pedido;
 use App\Produto;
@@ -54,6 +55,7 @@ class PedidoController {
 
             $itemPedido->save();
             DB::commit();
+            event(new PedidoRealizado());
             $response = redirect()->route('pedido-id', ['id' => $pedido->id]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -95,6 +97,7 @@ class PedidoController {
 
             $itemPedido->save();
             DB::commit();
+            event(new PedidoRealizado());
         } catch (\Exception $e) {
             DB::rollBack();
             $response = view('system.pedido.pedido', ['exception' => $e->getMessage(),

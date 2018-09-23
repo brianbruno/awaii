@@ -61,10 +61,12 @@ Route::namespace('Pedido')->group(function () {
 
 Route::namespace('Producao')->group(function () {
 
+    Route::get('api/producao/json', 'ProducaoController@itensProducao')->middleware('auth');
+
     Route::prefix('producao')->group(function () {
 
         Route::get('{message?}', 'ProducaoController@index')->name('producao')->middleware('auth');
-        Route::get('/{id_pedido}/{id_item}', 'ProducaoController@finalizarItem')->where(['id_pedido' => '[0-9]+', 'id_item' => '[0-9]+'])
+        Route::post('finalizar/{id_pedido}/{id_item}', 'ProducaoController@finalizarItem')->where(['id_pedido' => '[0-9]+', 'id_item' => '[0-9]+'])
              ->name('finalizar-item')->middleware('auth');
 
     });

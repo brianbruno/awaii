@@ -12,7 +12,7 @@
     </div>
 </template>
 
-<style>
+<style scoped>
     .pedidoPronto {
         font-size: 120px;
         color: red;

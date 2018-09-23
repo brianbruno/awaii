@@ -21,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\PedidoEntregue' => [
             'App\Listeners\EnviarNotificacaoPedidoPronto',
         ],
+        'App\Events\PedidoRealizado' => [
+            'App\Listeners\EnviarNotificacaoPedidoRealizado',
+        ],
     ];
 
     /**

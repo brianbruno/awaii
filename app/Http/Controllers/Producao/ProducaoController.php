@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Producao;
 
 use App\ItemPedido;
 use App\Pedido;
+use App\Events\PedidoRealizado;
 
 class ProducaoController {
 
@@ -21,8 +22,19 @@ class ProducaoController {
         $item = ItemPedido::where('id_pedido', $id_pedido)->where('sequencial', $id_item)->get();
         $item[0]->status = 'PRODUZIDO';
         $item[0]->save();
+        event(new PedidoRealizado());
+        return ['resultado' => true];
+    }
 
-        return redirect()->route('producao', ['message' => 'Item finalizado com sucesso!']);
+    public function itensProducao() {
+        $return = [];
+
+        $itens = ItemPedido::with('produto')
+                  ->with('pedido')
+                  ->where('status', '<>', 'PRODUZIDO')
+                  ->where('status', '<>', 'ENTREGUE')->get()->toJson();;
+
+        return $itens;
     }
 
 }

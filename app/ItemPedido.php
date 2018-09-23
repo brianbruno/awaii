@@ -9,13 +9,14 @@ class ItemPedido extends ModelMPK {
     protected $hidden = ['id_pedido'];
     protected $primaryKey = ['id_pedido', 'sequencial'];
     public $incrementing = false;
+    protected $appends = ['data'];
 
     public function pedido() {
         return $this->belongsTo(Pedido::class, 'id_pedido', 'id');
     }
 
     public function produto() {
-        return $this->hasMany(Produto::class, 'cdproduto', 'cdproduto');
+        return $this->hasOne(Produto::class, 'cdproduto', 'cdproduto');
     }
 
     public function getPrecoAttribute($value) {
