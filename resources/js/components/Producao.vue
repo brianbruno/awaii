@@ -6,7 +6,7 @@
                     <h2><span class="align-bottom">Produção</span></h2>
                 </div>
                 <div class="col-sm-1 text-right">
-                    <img v-if="carregando" class="loader" src="/public/images/loader.gif">
+                    <img v-if="carregando" class="loader" src="http://awaii.brian.place/public/images/loader.gif">
                 </div>
             </div>
         </div>

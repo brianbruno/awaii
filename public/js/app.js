@@ -58423,7 +58423,9 @@ var render = function() {
           _vm.carregando
             ? _c("img", {
                 staticClass: "loader",
-                attrs: { src: "/public/images/loader.gif" }
+                attrs: {
+                  src: "http://awaii.brian.place/public/images/loader.gif"
+                }
               })
             : _vm._e()
         ])
