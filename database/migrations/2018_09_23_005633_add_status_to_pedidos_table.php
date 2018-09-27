@@ -29,7 +29,7 @@ class AddStatusToPedidosTable extends Migration
     public function down()
     {
         Schema::table('pedidos', function (Blueprint $table) {
-            //
+            $table->dropColumn('status');
         });
     }
 }

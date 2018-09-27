@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers\Cliente;
 
-
+use Illuminate\Support\Facades\Auth;
 use App\Cliente;
 use Illuminate\Http\Request;
 
@@ -35,6 +35,7 @@ class ClienteController {
         $cliente->telefone = $request->telefone;
         $cliente->email = $request->email;
         $cliente->endereco = $request->endereco;
+        $cliente->unidade = Auth::user()->unidade;
 
         $cliente->save();
 

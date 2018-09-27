@@ -26,12 +26,6 @@
                                 </div>
                         @endif
 
-                        @if (!empty($resultado)  && $resultado)
-                            <div class="alert alert-success" role="alert">
-                                Pedido registrado com sucesso!
-                            </div>
-                        @endif
-
                         <form id="logout-form" action="{{ route('cadastrar-pedido') }}" method="POST">
                             @csrf
                             <div class="form-group">

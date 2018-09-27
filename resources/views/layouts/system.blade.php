@@ -21,76 +21,93 @@
 </head>
 <body>
 <div id="app">
-    <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">
-                {{ config('app.name', 'Laravel') }}
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <nav class="navbar navbar-icon-top navbar-expand-lg navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Left Side Of Navbar -->
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Produto
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ route('produtos') }}">Produtos</a>
-                            <a class="dropdown-item" href="{{ route('cadastrar-produto') }}">Cadastrar Produto</a>
-                        </div>
-                    </li>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item {{ Request::segment(1) == '' ? 'active' : ''}}">
+                    <a class="nav-link" href="{{ url('/') }}">
+                        <i class="fa fa-home"></i>
+                        {{ config('app.name', 'Laravel') }}
+                    </a>
+                </li>
+                <li class="nav-item dropdown {{ Request::segment(1) == 'produto' ? 'active' : ''}}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-warehouse"></i>
+                        Produto
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ route('produtos') }}">Produtos</a>
+                        <a class="dropdown-item" href="{{ route('cadastrar-produto') }}">Cadastrar Produto</a>
+                    </div>
+                </li>
 
-                    <li class="nav-item dropdown">
+                <li class="nav-item dropdown {{ Request::segment(1) == 'cliente' ? 'active' : ''}}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-address-card"></i>
+                        Cliente
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ route('clientes') }}">Clientes</a>
+                        <a class="dropdown-item" href="{{ route('cadastrar-cliente') }}">Cadastrar Cliente</a>
+                    </div>
+                </li>
+                @if(Auth::user()->podeAcessarPagina('pedido'))
+                    <li class="nav-item dropdown {{ Request::segment(1) == 'pedido' ? 'active' : ''}}">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Cliente
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ route('clientes') }}">Clientes</a>
-                            <a class="dropdown-item" href="{{ route('cadastrar-cliente') }}">Cadastrar Cliente</a>
-                        </div>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-utensils"><span class="badge badge-danger">{{ \App\Pedido::pedidosPendentes() }}</span></i>
                             Pedido
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ route('pedidos') }}">Pedidos <span class="badge badge-danger font-weight-light"> {{ \App\Pedido::pedidosPendentes() }}</span></a>
-                            <a class="dropdown-item" href="{{ route('cadastrar-pedido') }}">Novo Pedido</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ route('producao') }}">Produção</a>
+                            @if(Auth::user()->podeAcessarPagina('pedidos'))
+                                <a class="dropdown-item" href="{{ route('pedidos') }}">Pedidos</a>
+                            @endif
+                            @if(Auth::user()->podeAcessarPagina('cadastrar-pedido'))
+                                <a class="dropdown-item" href="{{ route('cadastrar-pedido') }}">Novo Pedido</a>
+                            @endif
+                            @if(Auth::user()->podeAcessarPagina('producao'))
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ route('producao') }}">Produção</a>
+                            @endif
                         </div>
-                    </li>
-                </ul>
-
-                <!-- Right Side Of Navbar -->
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            {{ Auth::user()->name }} <span class="caret"></span>
+                </li>
+                @endif
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        <i class="fa fa-user-circle"></i>
+                        {{ Auth::user()->name }} <span class="caret"></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        @if(Auth::user()->podeAcessarPagina('housekeeping'))
+                            <a class="dropdown-item" href="{{ route('housekeeping') }}" >
+                                Painel de Controle
+                            </a>
+                        @endif
+                        <a class="dropdown-item" href="{{ route('logout') }}"
+                           onclick="event.preventDefault();
+                                                 document.getElementById('logout-form').submit();">
+                            {{ __('Logout') }}
                         </a>
 
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                               onclick="event.preventDefault();
-                                                 document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
-                            </a>
-
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </div>
+                </li>
+            </ul>
         </div>
     </nav>
-
     <main class="py-4">
+
+        @if (!empty($resultado)  && $resultado)
+            <notification mensagem="Operação realizada com sucesso!" tipo="sucesso" titulo="Sucesso!"></notification>
+        @endif
+
         @yield('content')
     </main>
 </div>

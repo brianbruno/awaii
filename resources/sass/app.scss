@@ -4,15 +4,23 @@
 
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
+@import url('https://use.fontawesome.com/releases/v5.3.1/css/all.css');
+
 @import '~toastr/build/toastr.min.css';
 
 // Variables
 @import 'variables';
 
+@import "navbar";
+
 $theme-colors: (
     'deeporange-darken4': #bf360c,
-    'red-lighten3': #ef9a9a,
-    'green-lighten3': #a5d6a7
+    'red-lighten3':       #ef9a9a,
+    'green-lighten3':     #a5d6a7,
+    'charleston':         #272635,
+    'blackshadows':       $blackshadows,
+    'isabelline':         $isabelline,
+    'roman-silver':       #848C8E
 );
 
 // Bootstrap
@@ -22,3 +30,8 @@ $theme-colors: (
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
+
+body {
+    background-color: $isabelline;
+}
+
