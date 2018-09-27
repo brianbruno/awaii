@@ -85,8 +85,10 @@ Route::namespace('Housekeeping')->group(function () {
 
         Route::view('', 'hk.index')->name('housekeeping')->middleware('auth', 'permissao');
         Route::view('unidades', 'hk.unidades')->middleware('auth', 'permissao');
+        Route::get('editar-unidade/{id}', 'UnidadeController@indexEditar')->name('unidade-id')->middleware('auth', 'permissao');
         Route::view('cadastrar-unidade', 'hk.cadastrar-unidade')->middleware('auth', 'permissao');
         Route::post('cadastrar-unidade',  'UnidadeController@cadastrar')->name('cadastrar-unidade')->middleware('auth', 'permissao');
+        Route::post('editar-unidade',  'UnidadeController@editar')->name('editar-unidade')->middleware('auth', 'permissao');
         Route::view('associar-unidade', 'hk.associar-unidade')->middleware('auth', 'permissao');
         Route::post('associar-unidade',  'UnidadeController@associar')->name('associar-unidade')->middleware('auth', 'permissao');
     });

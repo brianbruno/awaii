@@ -14,6 +14,7 @@
                                 <th scope="col">Nome</th>
                                 <th scope="col">Telefone</th>
                                 <th class="text-center" scope="col">Usuários</th>
+                                <th>Edditar</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -22,6 +23,7 @@
                                     <td>{{ $unidade->nome }}</td>
                                     <td>{{ $unidade->telefone }}</td>
                                     <td class="text-center">{{ $unidade->usuarios()->get()->count() }}</td>
+                                    <td class="text-center"><a href="{{ route('unidade-id', ['id' => $unidade->id]) }}"><i class="material-icons text-secondary">edit</i></a></td>
                                 </tr>
                             @endforeach
 

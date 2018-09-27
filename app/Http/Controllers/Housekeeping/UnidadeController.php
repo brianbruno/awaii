@@ -46,4 +46,24 @@ class UnidadeController {
         return view('hk.associar-unidade', ['resultado' => true]);
     }
 
+    public function indexEditar($id) {
+        return view('hk.editar-unidade', ['unidade' => Unidade::find($id)]);
+    }
+
+    public function editar(Request $request) {
+        $validatedData = $request->validate([
+            'nome' => 'required',
+            'telefone' => 'required'
+        ]);
+
+        $unidade = Unidade::find($request>id);
+
+        $unidade->nome = $request->nome;
+        $unidade->telefone = $request->telefone;
+
+        $unidade->save();
+
+        return view('hk.editar-unidade', ['resultado' => true, 'unidade' => $unidade]);
+    }
+
 }
