@@ -23,7 +23,7 @@ class ClienteController {
         $validatedData = $request->validate([
             'nome' => 'required|max:100',
             'cpf' => 'required|unique:clientes|max:11|cpf',
-            'telefone' => 'required',
+            'telefone' => 'required|max:15|numeric',
             'email' => 'required|email',
             'endereco' => 'required',
         ]);
@@ -48,7 +48,7 @@ class ClienteController {
 
     public function editar(Request $request) {
         $validatedData = $request->validate([
-            'telefone' => 'required',
+            'telefone' => 'required|max:15|numeric',
             'email' => 'required|email',
             'endereco' => 'required',
         ]);
