@@ -22,7 +22,7 @@ class ClienteController {
 
         $validatedData = $request->validate([
             'nome' => 'required|max:100',
-            'cpf' => 'required|unique:clientes|max:11',
+            'cpf' => 'required|unique:clientes|max:11|cpf',
             'telefone' => 'required',
             'email' => 'required|email',
             'endereco' => 'required',
@@ -40,5 +40,27 @@ class ClienteController {
         $cliente->save();
 
         return view('system.cliente.cadastrar-cliente', ['resultado' => true]);
+    }
+
+    public function indexEditar ($id) {
+        return view('system.cliente.editar-cliente', ['cliente' => Cliente::find($id)]);
+    }
+
+    public function editar(Request $request) {
+        $validatedData = $request->validate([
+            'telefone' => 'required',
+            'email' => 'required|email',
+            'endereco' => 'required',
+        ]);
+
+        $cliente = Cliente::find($request->id);
+
+        $cliente->telefone = $request->telefone;
+        $cliente->email = $request->email;
+        $cliente->endereco = $request->endereco;
+
+        $cliente->save();
+
+        return view('system.cliente.editar-cliente', ['resultado' => true, 'cliente' => $cliente]);
     }
 }

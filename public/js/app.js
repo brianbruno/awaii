@@ -13993,8 +13993,9 @@ module.exports = __webpack_require__(61);
 
 /***/ }),
 /* 13 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -14014,7 +14015,6 @@ window.Echo = new Echo({
   cluster: 'us2',
   encrypted: true
 });
-
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -14046,7 +14046,6 @@ window.Popper = __webpack_require__(5).default;
 
 try {
   window.$ = window.jQuery = __webpack_require__(3);
-
   __webpack_require__(17);
 } catch (e) {}
 
@@ -58271,6 +58270,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
+        console.log('Hey Ho! Show notification!');
         this.showNotification();
     },
 

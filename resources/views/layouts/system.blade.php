@@ -103,6 +103,18 @@
         </div>
     </nav>
     <main class="py-4">
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <notification mensagem="{{ $error }}" tipo="erro" titulo="Erro!"></notification>
+            @endforeach
+        @endif
+
+        @if (!empty($exception))
+            <div class="alert alert-danger">
+                <h1><strong>Erro crítico!</strong></h1>
+                <p>{{ $exception }}</p>
+            </div>
+        @endif
 
         @if (!empty($resultado)  && $resultado)
             <notification mensagem="Operação realizada com sucesso!" tipo="sucesso" titulo="Sucesso!"></notification>

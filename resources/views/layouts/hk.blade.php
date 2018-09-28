@@ -9,12 +9,12 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Scripts -->
-    <script src="{{ asset('public/js/app.js') }}" defer></script>
-
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
+
+    <!-- Scripts -->
+    <script src="{{ asset('public/js/app.js') }}" defer></script>
 
     <!-- Styles -->
     <link href="{{ asset('public/css/app.css') }}" rel="stylesheet">
@@ -95,5 +95,6 @@
         @yield('content')
     </main>
 </div>
+@yield('scripts')
 </body>
 </html>

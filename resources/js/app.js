@@ -17,7 +17,6 @@ window.Echo = new Echo({
     cluster: 'us2',
     encrypted: true
 });
-
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

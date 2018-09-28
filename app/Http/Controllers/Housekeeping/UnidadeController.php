@@ -56,7 +56,7 @@ class UnidadeController {
             'telefone' => 'required'
         ]);
 
-        $unidade = Unidade::find($request>id);
+        $unidade = Unidade::find($request->id);
 
         $unidade->nome = $request->nome;
         $unidade->telefone = $request->telefone;

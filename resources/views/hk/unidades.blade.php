@@ -14,7 +14,7 @@
                                 <th scope="col">Nome</th>
                                 <th scope="col">Telefone</th>
                                 <th class="text-center" scope="col">Usuários</th>
-                                <th>Edditar</th>
+                                <th class="text-center">Editar</th>
                             </tr>
                             </thead>
                             <tbody>

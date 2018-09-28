@@ -37,6 +37,8 @@ Route::namespace('Cliente')->group(function () {
 
         Route::get('', 'ClienteController@index')->name('clientes')->middleware('auth', 'permissao');
         Route::view('cadastro', 'system.cliente.cadastrar-cliente')->middleware('auth', 'permissao');
+        Route::get('editar-cliente/{id}', 'ClienteController@indexEditar')->name('cliente-id')->middleware('auth', 'permissao');
+        Route::post('editar-cliente',  'ClienteController@editar')->name('editar-cliente')->middleware('auth', 'permissao');
         Route::post('cadastro',  'ClienteController@cadastrar')->name('cadastrar-cliente')->middleware('auth', 'permissao');
 
     });

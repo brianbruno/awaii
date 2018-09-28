@@ -5,6 +5,7 @@
 <script>
     export default {
         mounted() {
+            console.log('Hey Ho! Show notification!');
             this.showNotification();
         },
         props: {
