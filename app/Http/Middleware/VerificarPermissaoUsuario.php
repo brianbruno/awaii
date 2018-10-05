@@ -16,21 +16,23 @@ class VerificarPermissaoUsuario
     public function handle($request, Closure $next)
     {
 
-        if (empty($request->user()->unidade) && !$request->is('housekeeping') && !$request->is('housekeeping/*')) {
+        if ((empty($request->user()->unidade) && !$request->is('housekeeping') && !$request->is('housekeeping/*') && $request->user()->level != 6)) {
             return redirect('novo');
         }
 
         if ($request->user()->level < 7) {
             $unidade = $request->user()->unidade()->get();
 
-            if (!empty($unidade[0])) {
+            if (!empty($unidade[0]) ) {
                 $unidade = $unidade[0];
 
                 if (empty($unidade->validade_licenca) || strtotime($unidade->validade_licenca) < strtotime(date('Y-M-d H:i:s')) ) {
                     return redirect('1002');
                 }
             } else {
-                return redirect('1002');
+                if ($request->user()->level != 6) {
+                  return redirect('1002');  
+                }
             }
 
 

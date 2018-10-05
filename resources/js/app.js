@@ -27,7 +27,7 @@ Vue.component('example-component', require('./components/ExampleComponent.vue'))
 Vue.component('fila', require('./components/Fila.vue'));
 Vue.component('notification', require('./components/Notification.vue'));
 Vue.component('producao-tasks', require('./components/Producao.vue'));
-
+Vue.component('pedido', require('./components/Pedido.vue'));
 
 const app = new Vue({
     el: '#app'
