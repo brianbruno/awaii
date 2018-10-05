@@ -7,12 +7,16 @@ use App\Helpers\ModelMPK;
 class ItemPedido extends ModelMPK {
 
     protected $hidden = ['id_pedido'];
-    protected $primaryKey = ['id_pedido', 'sequencial'];
+    protected $primaryKey = ['id_pedido', 'sequencial', 'unidade'];
     public $incrementing = false;
     protected $appends = ['data'];
 
     public function pedido() {
         return $this->belongsTo(Pedido::class, 'id_pedido', 'id');
+    }
+
+    public function unidade() {
+        return $this->belongsTo(Unidade::class, 'unidade', 'id');
     }
 
     public function produto() {

@@ -20,9 +20,26 @@ class VerificarPermissaoUsuario
             return redirect('novo');
         }
 
-        if (!$request->user()->podeAcessar($request)) {
-            return redirect('1001');
+        if ($request->user()->level < 7) {
+            $unidade = $request->user()->unidade()->get();
+
+            if (!empty($unidade[0])) {
+                $unidade = $unidade[0];
+
+                if (empty($unidade->validade_licenca) || strtotime($unidade->validade_licenca) < strtotime(date('Y-M-d H:i:s')) ) {
+                    return redirect('1002');
+                }
+            } else {
+                return redirect('1002');
+            }
+
+
+
+            if (!$request->user()->podeAcessar($request)) {
+                return redirect('1001');
+            }
         }
+
 
 
         return $next($request);

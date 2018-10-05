@@ -18,7 +18,7 @@
                                 <div class="card text-white bg-deeporange-darken4" >
                                     <div class="card-header">Pedidos pendentes</div>
                                     <div class="card-body text-center">
-                                        <h1 class="card-title"><strong>{{ App\Pedido::pedidosPendentes() }}</strong></h1>
+                                        <h1 class="card-title"><strong>{{ App\Pedido::pedidosPendentes(Auth::user()->unidade) }}</strong></h1>
                                     </div>
                                 </div>
                             </div>

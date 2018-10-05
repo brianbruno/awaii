@@ -20,10 +20,15 @@ class CreateItemPedidosTable extends Migration
             $table->integer('quantidade');
             $table->double('preco', 10, 2);
             $table->double('total', 10, 2);
+            $table->enum('status',['CRIADO', 'PRODUCAO', 'PRODUZIDO', 'ENTREGUE'])
+                ->default('CRIADO')
+                ->comment('Status do produto');
             $table->timestamp('dtpedido')->useCurrent();
+            $table->integer('unidade')->unsigned();
+            $table->foreign('unidade')->references('id')->on('unidades');
             $table->foreign('cdproduto')->references('cdproduto')->on('produtos');
             $table->foreign('id_pedido')->references('id')->on('pedidos');
-            $table->primary(['id_pedido', 'sequencial']);
+            $table->primary(['id_pedido', 'sequencial', 'unidade']);
             $table->softDeletes();
             $table->timestamps();
         });

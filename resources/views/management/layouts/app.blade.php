@@ -65,59 +65,16 @@
                             <span>Geral</span>
                         </li>
                         <li>
-                            <a href="{{ url('housekeeping/') }}">
+                            <a href="{{ url('management/') }}">
                                 <i class="fa fa-tachometer-alt"></i>
                                 <span>Dashbooard</span>
                                 <span class="badge badge-pill badge-danger">New</span>
                             </a>
                         </li>
-                        <li class="sidebar-dropdown">
-                            <a href="#">
-                                <i class="fa fa-chart-line"></i>
-                                <span>Relatórios</span>
-                            </a>
-                            <div class="sidebar-submenu">
-                                <ul>
-                                    <li>
-                                        <a href="#">Pedidos</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="header-menu">
-                            <span>Cadastros</span>
-                        </li>
                         <li>
-                            <a href="{{ url('housekeeping/unidades') }}">
-                                <i class="far fa-building"></i>
-                                <span>Unidade</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('housekeeping/clientes') }}">
-                                <i class="far fa-id-badge"></i>
-                                <span>Cliente</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('housekeeping/produtos') }}">
-                                <i class="fas fa-boxes"></i>
-                                <span>Produto</span>
-                            </a>
-                        </li>
-                        <li class="header-menu">
-                            <span>Usuários</span>
-                        </li>
-                        <li>
-                            <a href="{{ url('housekeeping/usuarios') }}">
-                                <i class="fas fa-user-check"></i>
-                                <span>Usuários</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('housekeeping/user-management') }}">
-                                <i class="fas fa-user-check"></i>
-                                <span>Controle de acesso</span>
+                            <a href="{{ url('management/organizacoes') }}">
+                                <i class="fa fa-tachometer-alt"></i>
+                                <span>Organizacoes</span>
                             </a>
                         </li>
                     </ul>

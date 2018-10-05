@@ -14,10 +14,18 @@ class CreatePedidosTable extends Migration
     public function up()
     {
         Schema::create('pedidos', function (Blueprint $table) {
-            $table->increments('id');
+            $table->integer('id')->unsigned();
             $table->integer('id_cliente')->unsigned();
+            $table->enum('status',['FINALIZADO', 'CRIADO', 'ANDAMENTO', 'CANCELADO'])
+                ->default('CRIADO')
+                ->comment('Status do pedido');
             $table->timestamp('dt_pedido')->useCurrent();
+            $table->integer('unidade')->unsigned();
+            $table->integer('id_ultatu')->unsigned();
+            $table->foreign('id_ultatu')->references('id')->on('users');
+            $table->foreign('unidade')->references('id')->on('unidades');
             $table->foreign('id_cliente')->references('id')->on('clientes');
+            $table->primary(['id', 'unidade']);
             $table->softDeletes();
             $table->timestamps();
         });

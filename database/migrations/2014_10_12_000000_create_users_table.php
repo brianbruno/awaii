@@ -17,6 +17,9 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('name', 100);
             $table->string('email', 70)->unique();
+            $table->enum('level',['1', '2', '3', '4', '5', '6', '7'])
+                ->default('1')
+                ->comment('1 - Normal 2 - Atendente 3 - Garçom 4 - Cozinheiro 5 - Todos 6 - Administrador 7 - Coordenador');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

@@ -19,6 +19,7 @@
                         <div class="card-body">
                             <h4 class="card-title">{{ producao.produto.nmproduto }}</h4>
                             <h6>Quantidade: {{ producao.quantidade }}</h6>
+                            <h6>Pedido: {{ producao.pedido.id }}</h6>
                         </div>
                         <div class="card-footer text-muted">
                             <h6>{{ producao.data }}</h6>

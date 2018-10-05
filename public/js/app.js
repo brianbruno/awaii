@@ -13988,14 +13988,14 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(13);
-module.exports = __webpack_require__(61);
+__webpack_require__(61);
+module.exports = __webpack_require__(62);
 
 
 /***/ }),
 /* 13 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -58417,6 +58417,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -58510,7 +58511,11 @@ var render = function() {
                   _vm._v(_vm._s(producao.produto.nmproduto))
                 ]),
                 _vm._v(" "),
-                _c("h6", [_vm._v("Quantidade: " + _vm._s(producao.quantidade))])
+                _c("h6", [
+                  _vm._v("Quantidade: " + _vm._s(producao.quantidade))
+                ]),
+                _vm._v(" "),
+                _c("h6", [_vm._v("Pedido: " + _vm._s(producao.pedido.id))])
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "card-footer text-muted" }, [
@@ -58592,6 +58597,12 @@ if (false) {
 
 /***/ }),
 /* 61 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 62 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

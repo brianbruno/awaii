@@ -2,14 +2,23 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\ItemPedido;
-use App\Cliente;
+use App\Helpers\ModelMPK;
 
-class Pedido extends Model {
+class Pedido extends ModelMPK {
+
+    protected $primaryKey = ['id', 'unidade'];
+
+    /**
+     * IDPEDIDO + IDUNIDADE
+     */
+    const CONTADOR = 'IDPEDIDO';
 
     public function itens() {
         return $this->hasMany(ItemPedido::class, 'id_pedido', 'id');
+    }
+
+    public function unidade() {
+        return $this->belongsTo(Cliente::class, 'unidade', 'id');
     }
 
     public function cliente() {
@@ -24,7 +33,8 @@ class Pedido extends Model {
         return 'R$' . number_format($valor, 2, ',', '.');
     }
 
-    public static function pedidosPendentes() {
-        return Pedido::where('status', '<>', 'FINALIZADO')->count();
+    public static function pedidosPendentes($unidade) {
+        return Pedido::where('status', '<>', 'FINALIZADO')
+                      ->where('unidade', $unidade)->count();
     }
 }

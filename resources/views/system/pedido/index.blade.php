@@ -10,10 +10,6 @@
 
                     <div class="card-body">
 
-                        @if (!empty($message))
-                            <notification mensagem="{{ $message }}" tipo="alerta" titulo="Erro!"></notification>
-                        @endif
-
                         <table class="table">
                             <thead>
                             <tr>
@@ -26,11 +22,12 @@
                             </tr>
                             </thead>
                             <tbody>
+
                             @foreach ($pedidos as $pedido)
                                 <tr>
                                     <td>{{ $pedido->id }}</td>
-                                    <td>{{ $pedido->cliente()->get()[0]->nome }}</td>
-                                    <td>{{ $pedido->cliente()->get()[0]->telefone }}</td>
+                                    <td>{{ $pedido->cliente->nome }}</td>
+                                    <td>{{ $pedido->cliente->telefone }}</td>
                                     <td>{{ date('d/m/Y H:i:s', strtotime($pedido->dt_pedido)) }}</td>
                                     <td>{{ $pedido->total  }}</td>
                                     <td><a href="{{ route('pedido-id', ['id' => $pedido->id]) }}"><i class="material-icons text-secondary">edit</i></a>

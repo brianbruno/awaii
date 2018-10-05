@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Producao;
 use App\ItemPedido;
 use App\Pedido;
 use App\Events\PedidoRealizado;
+use \Illuminate\Support\Facades\Auth;
 
 class ProducaoController {
 
@@ -19,7 +20,9 @@ class ProducaoController {
     }
 
     public function finalizarItem ($id_pedido, $id_item) {
-        $item = ItemPedido::where('id_pedido', $id_pedido)->where('sequencial', $id_item)->get();
+        $item = ItemPedido::where('id_pedido', $id_pedido)
+                          ->where('sequencial', $id_item)
+                          ->where('unidade', Auth::user()->unidade)->get();
         $item[0]->status = 'PRODUZIDO';
         $item[0]->save();
         event(new PedidoRealizado());
@@ -31,6 +34,7 @@ class ProducaoController {
 
         $itens = ItemPedido::with('produto')
                   ->with('pedido')
+                  ->where('unidade', '=', Auth::user()->unidade)
                   ->where('status', '<>', 'PRODUZIDO')
                   ->where('status', '<>', 'ENTREGUE')->get()->toJson();;
 

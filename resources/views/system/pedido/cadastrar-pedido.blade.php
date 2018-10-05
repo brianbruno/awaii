@@ -8,24 +8,6 @@
                     <div class="card-header">Novo pedido</div>
 
                     <div class="card-body">
-
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-                        @if (!empty($exception))
-                                <div class="alert alert-danger">
-                                    <strong>Erro crítico!</strong>
-                                    <p>{{ $exception }}</p>
-                                </div>
-                        @endif
-
                         <form id="logout-form" action="{{ route('cadastrar-pedido') }}" method="POST">
                             @csrf
                             <div class="form-group">

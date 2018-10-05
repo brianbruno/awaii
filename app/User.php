@@ -33,6 +33,9 @@ class User extends Authenticatable
         return $this->hasOne(Unidade::class, 'id', 'unidade');
     }
 
+    public function user() {
+        return $this->hasMany(User::class, 'unidade', 'id');
+    }
 
     public function podeAcessar(Request $request) {
         $uri = $request->path();
@@ -42,20 +45,21 @@ class User extends Authenticatable
 
     public function podeAcessarPagina($uri) {
         $level = $this->level;
-        $unidade = $this->unidade;
+        $paths = explode('/', $uri);
 
         $result = false;
 
         $permissoes = array(
-            '/' => '*',
-            'home' => '*',
-            'pedido' => [2, 3, 4, 5, 6, 7],
-            'producao' => [2, 3, 4, 5, 6, 7],
-            'housekeeping' => ['7']
+            '' => '*',
+            'home' => [1, 2, 3, 4, 5],
+            'pedido' => [1, 2, 3, 4, 5],
+            'producao' => [1, 2, 3, 4, 5],
+            'housekeeping' => [6],
+            'management' => [7]
         );
 
-        if (isset($permissoes[$uri])) {
-            if ($permissoes[$uri] == '*' || in_array($level, $permissoes[$uri])) {
+        if (isset($permissoes[$paths[0]])) {
+            if ($permissoes[$paths[0]] == '*' || in_array($level, $permissoes[$paths[0]])) {
                 $result = true;
             }
         } else {

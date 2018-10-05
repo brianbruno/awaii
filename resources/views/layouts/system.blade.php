@@ -34,31 +34,10 @@
                         {{ config('app.name', 'Laravel') }}
                     </a>
                 </li>
-                <li class="nav-item dropdown {{ Request::segment(1) == 'produto' ? 'active' : ''}}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-warehouse"></i>
-                        Produto
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ route('produtos') }}">Produtos</a>
-                        <a class="dropdown-item" href="{{ route('cadastrar-produto') }}">Cadastrar Produto</a>
-                    </div>
-                </li>
-
-                <li class="nav-item dropdown {{ Request::segment(1) == 'cliente' ? 'active' : ''}}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-address-card"></i>
-                        Cliente
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ route('clientes') }}">Clientes</a>
-                        <a class="dropdown-item" href="{{ route('cadastrar-cliente') }}">Cadastrar Cliente</a>
-                    </div>
-                </li>
                 @if(Auth::user()->podeAcessarPagina('pedido'))
                     <li class="nav-item dropdown {{ Request::segment(1) == 'pedido' ? 'active' : ''}}">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-utensils"><span class="badge badge-danger">{{ \App\Pedido::pedidosPendentes() }}</span></i>
+                            <i class="fa fa-utensils"><span class="badge badge-danger">{{ \App\Pedido::pedidosPendentes(Auth::user()->unidade) }}</span></i>
                             Pedido
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -68,12 +47,22 @@
                             @if(Auth::user()->podeAcessarPagina('cadastrar-pedido'))
                                 <a class="dropdown-item" href="{{ route('cadastrar-pedido') }}">Novo Pedido</a>
                             @endif
+                        </div>
+                </li>
+                @endif
+
+                @if(Auth::user()->podeAcessarPagina('producao'))
+                    <li class="nav-item dropdown {{ Request::segment(1) == 'pedido' ? 'active' : ''}}">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-clipboard-list"></i>
+                            Produção
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             @if(Auth::user()->podeAcessarPagina('producao'))
-                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ route('producao') }}">Produção</a>
                             @endif
                         </div>
-                </li>
+                    </li>
                 @endif
             </ul>
             <ul class="navbar-nav ml-auto">
@@ -85,7 +74,7 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                         @if(Auth::user()->podeAcessarPagina('housekeeping'))
                             <a class="dropdown-item" href="{{ route('housekeeping') }}" >
-                                Painel de Controle
+                                Gerencial
                             </a>
                         @endif
                         <a class="dropdown-item" href="{{ route('logout') }}"
@@ -102,7 +91,16 @@
             </ul>
         </div>
     </nav>
+    <nav class="navbar sub-nav">
+        <span class="navbar-text ml-auto text-light">
+            Unidade: {{ Auth::user()->unidade()->get()[0]->nome }}
+        </span>
+    </nav>
     <main class="py-4">
+        @if (!empty($message))
+            <notification mensagem="{{ $message }}" tipo="alerta" titulo="Alerta!"></notification>
+        @endif
+
         @if ($errors->any())
             @foreach ($errors->all() as $error)
                 <notification mensagem="{{ $error }}" tipo="erro" titulo="Erro!"></notification>
@@ -113,6 +111,13 @@
             <div class="alert alert-danger">
                 <h1><strong>Erro crítico!</strong></h1>
                 <p>{{ $exception }}</p>
+            </div>
+        @endif
+
+        @if (!empty($stacktrace) && env('APP_ENV', 'production') == 'local')
+            <div class="alert alert-danger">
+                <h1><strong>Stacktrace:</strong></h1>
+                <p>{{ $stacktrace }}</p>
             </div>
         @endif
 

@@ -12,9 +12,11 @@ use App\Cliente;
 use App\Events\PedidoEntregue;
 use App\Events\PedidoRealizado;
 use App\ItemPedido;
+use App\NovoCodigo;
 use App\Pedido;
 use App\Produto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Exports\PedidosExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -22,7 +24,9 @@ use Maatwebsite\Excel\Facades\Excel;
 class PedidoController {
 
     public function index() {
-        return view('system.pedido.index', ['pedidos' => Pedido::where('status', '<>', 'FINALIZADO')->get()]);
+        $pedidos = Pedido::where('status', '<>', 'FINALIZADO')->where('unidade', Auth::user()->unidade)->get();
+        dump($pedidos[0]->with('cliente')->get());die;
+        return view('system.pedido.index', ['pedidos' => $pedidos]);
     }
 
     public function cadastrarIndex() {
@@ -36,11 +40,20 @@ class PedidoController {
             'quantidade' => 'required|numeric'
         ]);
 
+
         try {
             DB::beginTransaction();
 
+            $contador = Pedido::CONTADOR.Auth::user()->unidade;
+
+            $novoCodigo = NovoCodigo::retrieve($contador);
+
             $pedido = new Pedido();
+            $pedido->id = $novoCodigo->getProxCodigo();
             $pedido->id_cliente = $request->id_cliente;
+            $pedido->unidade = Auth::user()->unidade;
+            $pedido->id_ultatu = Auth::user()->id;
+
             $pedido->save();
 
             $produto = Produto::find($request->cdproduto);
@@ -52,6 +65,7 @@ class PedidoController {
             $itemPedido->quantidade = $request->quantidade;
             $itemPedido->preco = $produto->preco;
             $itemPedido->total = $itemPedido->quantidade * $produto->preco;
+            $itemPedido->unidade = Auth::user()->unidade;
 
             $itemPedido->save();
             DB::commit();
@@ -68,7 +82,7 @@ class PedidoController {
     }
 
     public function infoPedido($id) {
-        return view('system.pedido.pedido', ['pedido' => Pedido::find($id), 'produtos' => Produto::all()]);
+        return view('system.pedido.pedido', ['pedido' => Pedido::where('id', $id)->where('unidade', Auth::user()->unidade)->get()[0], 'produtos' => Produto::all()]);
     }
 
     public function cadastrarItem(Request $request) {
@@ -86,7 +100,6 @@ class PedidoController {
             $pedido = Pedido::find($request->id_pedido);
             $produto = Produto::find($request->cdproduto);
 
-
             $itemPedido = new ItemPedido();
             $itemPedido->id_pedido = $pedido->id;
             $itemPedido->sequencial = ItemPedido::where('id_pedido', $request->id_pedido)->count() + 1;
@@ -94,6 +107,7 @@ class PedidoController {
             $itemPedido->quantidade = $request->quantidade;
             $itemPedido->preco = $produto->preco;
             $itemPedido->total = $itemPedido->quantidade * $produto->preco;
+            $itemPedido->unidade = Auth::user()->unidade;
 
             $itemPedido->save();
             DB::commit();
@@ -109,23 +123,40 @@ class PedidoController {
     }
 
     public function finalizarPedido($id) {
-        $pedido = Pedido::find($id);
         $return = null;
-        $pedido->status = 'FINALIZADO';
+        $unidade = Auth::user()->unidade;
+        try {
+            DB::beginTransaction();
 
-        $itens = $pedido->itens()->where('status', '<>', 'PRODUZIDO')->count();
+            $pedido = Pedido::where('id', $id)
+                            ->where('unidade', $unidade)->get()[0];
 
-        if ($itens == 0) {
-            $pedido->save();
-            $pedido->itens()->update(['status' => 'ENTREGUE']);
-            event(new PedidoEntregue($pedido));
-            $return = redirect()->route('pedidos');
-        } else {
-            $mensagem = 'Não foi possível finalizar esse pedido. Nem todos os itens foram produzidos.';
-            $view = 'system.pedido.pedido';
+            $itens = ItemPedido::where('status', '<>', 'PRODUZIDO')
+                               ->where('id_pedido', $id)
+                               ->where('unidade', $unidade)->count();
 
-            $return = view($view, ['pedido' => Pedido::find($id), 'produtos' => Produto::all(), 'message' => $mensagem]);
+    //        dump($pedido);die;
+
+            if ($itens == 0) {
+                $pedido->status = 'FINALIZADO';
+                $pedido->save();
+                $itens->update(['status' => 'ENTREGUE']);
+                event(new PedidoEntregue($pedido));
+                $return = redirect()->route('pedidos');
+            } else {
+                $mensagem = 'Não foi possível finalizar esse pedido. Nem todos os itens foram produzidos.';
+                $view = 'system.pedido.pedido';
+
+                $return = view($view, ['pedido' => Pedido::find($id, $unidade), 'produtos' => Produto::all(), 'message' => $mensagem]);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $return = view('system.pedido.pedido', ['exception' => $e->getMessage(),
+                'produtos' => Produto::all(), 'stacktrace' => $e->getTraceAsString(),
+                'resultado' => false, 'pedido' => Pedido::where('id', $id)->where('unidade', $unidade)->with('cliente')->get()[0]]);
         }
+
         return $return;
     }
 
