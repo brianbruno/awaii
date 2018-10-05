@@ -24,8 +24,9 @@ use Maatwebsite\Excel\Facades\Excel;
 class PedidoController {
 
     public function index() {
-        $pedidos = Pedido::where('status', '<>', 'FINALIZADO')->where('unidade', Auth::user()->unidade)->get();
-        dump($pedidos[0]->with('cliente')->get());die;
+        $pedidos = Pedido::where('status', '<>', 'FINALIZADO')
+                         ->where('unidade', Auth::user()->unidade)
+                         ->with('cliente')->get();
         return view('system.pedido.index', ['pedidos' => $pedidos]);
     }
 
@@ -47,13 +48,14 @@ class PedidoController {
             $contador = Pedido::CONTADOR.Auth::user()->unidade;
 
             $novoCodigo = NovoCodigo::retrieve($contador);
-
             $pedido = new Pedido();
+            DB::rollBack();
+            dump('oi');die;
             $pedido->id = $novoCodigo->getProxCodigo();
             $pedido->id_cliente = $request->id_cliente;
             $pedido->unidade = Auth::user()->unidade;
             $pedido->id_ultatu = Auth::user()->id;
-
+            
             $pedido->save();
 
             $produto = Produto::find($request->cdproduto);

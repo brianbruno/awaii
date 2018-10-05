@@ -24,6 +24,7 @@ class ProdutoController {
         $validatedData = $request->validate([
             'cdproduto' => 'required|unique:produtos|max:10',
             'nmproduto' => 'required|max:100',
+            'unidade' => 'required|max:2',
             'preco' => 'required|numeric',
         ]);
 
@@ -31,9 +32,8 @@ class ProdutoController {
 
         $produto->cdproduto = $request->cdproduto;
         $produto->nmproduto = $request->nmproduto;
-        $produto->unidade = Auth::user()->unidade;
+        $produto->unidade = $request->unidade;
         $produto->preco = $request->preco;
-
 
         $produto->save();
 
