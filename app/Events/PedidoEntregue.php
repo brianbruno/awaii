@@ -14,15 +14,15 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 class PedidoEntregue implements ShouldBroadcast {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $pedido;
+    public $id;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Pedido $pedido) {
-        $this->pedido = $pedido;
+    public function __construct($id, $unidade) {
+        $this->id = $id;
     }
 
     /**

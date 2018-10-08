@@ -24,10 +24,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class PedidoController {
 
     public function index() {
-        $pedidos = Pedido::where('status', '<>', 'FINALIZADO')
-                         ->where('unidade', Auth::user()->unidade)
-                         ->with('cliente')->get();
-        return view('system.pedido.index', ['pedidos' => $pedidos]);
+        return view('system.pedido.index');
     }
 
     public function cadastrarIndex() {
@@ -48,14 +45,15 @@ class PedidoController {
             $contador = Pedido::CONTADOR.Auth::user()->unidade;
 
             $novoCodigo = NovoCodigo::retrieve($contador);
+            $codigo = $novoCodigo->getProxCodigo();
+            $unidade = Auth::user()->unidade;
+
             $pedido = new Pedido();
-            DB::rollBack();
-            dump('oi');die;
-            $pedido->id = $novoCodigo->getProxCodigo();
             $pedido->id_cliente = $request->id_cliente;
-            $pedido->unidade = Auth::user()->unidade;
+            $pedido->id = $codigo;
+            $pedido->unidade = $unidade;
             $pedido->id_ultatu = Auth::user()->id;
-            
+
             $pedido->save();
 
             $produto = Produto::find($request->cdproduto);
@@ -83,8 +81,10 @@ class PedidoController {
         return $response;
     }
 
-    public function infoPedido($id) {
-        return view('system.pedido.pedido', ['pedido' => Pedido::where('id', $id)->where('unidade', Auth::user()->unidade)->get()[0], 'produtos' => Produto::all()]);
+    public function infoPedido($id, $unidade = '') {
+        $unidade = Auth::user()->unidade;
+        return view('system.pedido.pedido', ['pedido' => Pedido::getPedido($id, $unidade), 'produtos' => Produto::all(),
+                        'itens' => ItemPedido::getItensPedido($id, $unidade) ]);
     }
 
     public function cadastrarItem(Request $request) {
@@ -94,7 +94,7 @@ class PedidoController {
             'quantidade' => 'required|numeric'
         ]);
 
-        $response = $this->infoPedido($request->id_pedido);
+        $response = $this->infoPedido($request->id_pedido, Auth::user()->unidade);
 
         try {
             DB::beginTransaction();
@@ -124,46 +124,78 @@ class PedidoController {
         return $response;
     }
 
-    public function finalizarPedido($id) {
+    public function finalizarPedido($id, $unidade = '') {
         $return = null;
         $unidade = Auth::user()->unidade;
+        $finalizarPedido = $this->finalizarPedidoFinal($id, $unidade);
+
+        if ($finalizarPedido['codigo'] == 1) {
+            $view = 'system.pedido.pedido';
+            $return = view($view, ['pedido' => Pedido::find($id, $unidade), 'produtos' => Produto::all(), 'message' => $finalizarPedido['mensagem']]);
+        } else if ($finalizarPedido['codigo'] == 200) {
+            $return = redirect()->route('pedidos');
+        } else if ($finalizarPedido['codigo'] == 2) {
+            $return = view('system.pedido.pedido', ['exception' => $finalizarPedido['mensagem'],
+                'produtos' => Produto::all(), 'stacktrace' => $finalizarPedido['stacktrace'],
+                'resultado' => false, 'pedido' => Pedido::where('id', $id)->where('unidade', $unidade)->with('cliente')->get()[0]]);
+        }
+        return $return;
+    }
+
+    public function finalizarPedidoFinal($id, $unidade) {
+
+        $resultado = array(
+            'resultado' => false,
+            'mensagem'  => 'Erro ao realizar a operação',
+            'codigo'    => 1
+        );
+
         try {
             DB::beginTransaction();
 
             $pedido = Pedido::where('id', $id)
-                            ->where('unidade', $unidade)->get()[0];
+                ->where('unidade', $unidade)->first();
 
             $itens = ItemPedido::where('status', '<>', 'PRODUZIDO')
-                               ->where('id_pedido', $id)
-                               ->where('unidade', $unidade)->count();
-
-    //        dump($pedido);die;
+                ->where('id_pedido', $id)
+                ->where('unidade', $unidade)->count();
 
             if ($itens == 0) {
                 $pedido->status = 'FINALIZADO';
                 $pedido->save();
-                $itens->update(['status' => 'ENTREGUE']);
-                event(new PedidoEntregue($pedido));
-                $return = redirect()->route('pedidos');
+                $itens = ItemPedido::where('id_pedido', $id)
+                    ->where('unidade', $unidade)->update(['status' => 'ENTREGUE']);
+                event(new PedidoEntregue($id, $unidade));
+                $resultado['codigo']   = 200;
+                $resultado['mensagem'] = 'Operação realizada com sucesso.';
             } else {
-                $mensagem = 'Não foi possível finalizar esse pedido. Nem todos os itens foram produzidos.';
-                $view = 'system.pedido.pedido';
-
-                $return = view($view, ['pedido' => Pedido::find($id, $unidade), 'produtos' => Produto::all(), 'message' => $mensagem]);
+                $resultado['codigo']   = 1;
+                $resultado['mensagem'] = 'Não foi possível finalizar esse pedido. Nem todos os itens foram produzidos.';
             }
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            $return = view('system.pedido.pedido', ['exception' => $e->getMessage(),
-                'produtos' => Produto::all(), 'stacktrace' => $e->getTraceAsString(),
-                'resultado' => false, 'pedido' => Pedido::where('id', $id)->where('unidade', $unidade)->with('cliente')->get()[0]]);
+            $resultado['mensagem'] = $e->getMessage();
+            $resultado['stacktrace'] = $e->getTraceAsString();
+            $resultado['line'] = $e->getLine();
+            $resultado['trace'] = $e->getTrace();
+            $resultado['code'] = $e->getCode();
         }
 
-        return $return;
+        return $resultado;
     }
 
     public function export(){
         return Excel::download(new PedidosExport, 'pedidos-'.date('d-m-Y-Hi').'.xlsx');
+    }
+
+    public function pedidosJson($unidade = '') {
+        $unidade = Auth::user()->unidade;
+        return Pedido::getPedidosPendentes($unidade);
+    }
+
+    public function finalizarJson($id, $unidade = '') {
+        return $finalizarPedido = $this->finalizarPedidoFinal($id, $unidade);
     }
 
 }

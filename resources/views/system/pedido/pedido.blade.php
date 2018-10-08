@@ -5,29 +5,14 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Pedido {{ $pedido->id }} | Cliente: {{ $pedido->cliente()->get()[0]->nome }}</div>
+                    <div class="card-header">Pedido {{ $pedido->pedido_id }} | Cliente: {{ $pedido->cliente_nome }}</div>
 
                     <div class="card-body">
-                        <a class="btn btn-warning btn-lg btn-block" href="{{ route('finalizar-pedido', ['id' => $pedido->id]) }}">Finalizar Pedido</a>
+                        <a class="btn btn-warning btn-lg btn-block" href="{{ route('finalizar-pedido', ['id' => $pedido->pedido_id, 'unidade' => $pedido->unidade_id]) }}">Finalizar Pedido</a>
                         <hr>
-                        @if (!empty($exception))
-                            <div class="alert alert-danger">
-                                <strong>Erro crítico!</strong>
-                                <p>{{ $exception }}</p>
-                                <p>{{ $stacktrace }}</p>
-                            </div>
-                        @endif
-                        @if (!empty($resultado)  && $resultado)
-                            <div class="alert alert-success" role="alert">
-                                Item registrado com sucesso!
-                            </div>
-                        @endif
-                        @if (!empty($message))
-                            <notification mensagem="{{ $message }}" tipo="erro" titulo="Erro!"></notification>
-                        @endif
                         <form id="form" method="POST" action="{{ route('cadastrar-item') }}" class="form-inline">
                             @csrf
-                            <input type="text" hidden id="id_pedido" name="id_pedido" value="{{ $pedido->id }}">
+                            <input type="text" hidden id="id_pedido" name="id_pedido" value="{{ $pedido->pedido_id }}">
                             <label class="sr-only" for="cdproduto">Item</label>
                             <select id="cdproduto" name="cdproduto" class="custom-select form-control mb-2 col-sm-5">
                                 <option selected>Escolha um produto</option>
@@ -53,10 +38,10 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach ($pedido->itens()->get() as $item)
+                            @foreach ($itens as $item)
                                 <tr class="{{ $item->status != 'PRODUZIDO' ? 'bg-red-lighten3' : 'bg-green-lighten3'}}">
-                                    <td>{{ $item->produto()->get()[0]->nmproduto }}</td>
-                                    <td>{{ $item->quantidade.' ('.$item->produto()->get()[0]->unidade.')' }}</td>
+                                    <td>{{ $item->nmproduto }}</td>
+                                    <td>{{ $item->quantidade.' ('.$item->unidade.')' }}</td>
                                     <td>{{ $item->preco }}</td>
                                     <td>{{ $item->total }}</td>
                                 </tr>

@@ -25,12 +25,15 @@ Route::get('/home', 'HomeController@index')->name('home')->middleware('auth', 'p
 
 Route::namespace('Pedido')->group(function () {
 
+    Route::get('api/pedido/json/{unidade?}', 'PedidoController@pedidosJson')->middleware('auth', 'permissao');
+    Route::post('api/finalizar/json/{id}/{unidade?}', 'PedidoController@finalizarJson')->middleware('auth', 'permissao');
+
     Route::prefix('pedido')->group(function () {
 
         Route::get('', 'PedidoController@index')->name('pedidos')->middleware('auth', 'permissao');
-        Route::get('/{id}','PedidoController@infoPedido')->where(['id' => '[0-9]+'])->name('pedido-id')->middleware('auth', 'permissao');
+        Route::get('/{id}/{unidade?}','PedidoController@infoPedido')->where(['id' => '[0-9]+'])->name('pedido-id')->middleware('auth', 'permissao');
         Route::get('cadastro', 'PedidoController@cadastrarIndex')->middleware('auth', 'permissao');
-        Route::get('finalizar/{id}',  'PedidoController@finalizarPedido')->name('finalizar-pedido')->middleware('auth', 'permissao');
+        Route::get('finalizar/{id}/{unidade?}',  'PedidoController@finalizarPedido')->name('finalizar-pedido')->middleware('auth', 'permissao');
         Route::get('export', 'PedidoController@export')->name('exportar-pedidos')->middleware('auth', 'permissao');
         Route::post('cadastro/item',  'PedidoController@cadastrarItem')->name('cadastrar-item')->middleware('auth', 'permissao');
         Route::post('cadastro',  'PedidoController@cadastrar')->name('cadastrar-pedido')->middleware('auth', 'permissao');
