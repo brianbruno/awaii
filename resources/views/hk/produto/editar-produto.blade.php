@@ -1,7 +1,12 @@
 @extends('hk.produto.app')
 
 @section('content-app')
-    <table class="table">
+    <h2>{{ $produto->nmproduto }}</h2>
+
+    <h4>Custo total do produto: R$ 2,50</h4>
+
+    <h5>Receita:</h5>
+    <table class="table table-hover table-striped">
         <thead>
         <tr>
             <th scope="col">Cd. Produto</th>
@@ -13,12 +18,12 @@
         </tr>
         </thead>
         <tbody>
-        @foreach ($produtos as $produto)
+        @foreach($produto->receita as $item_receita)
             <tr>
-                <td>{{ $produto->cdproduto }}</td>
-                <td>{{ $produto->nmproduto }}</td>
-                <td>{{ $produto->unidade }}</td>
-                <td>{{ $produto->precof }}</td>
+                <td>{{ $item_receita->cdproduto_filho }}</td>
+                <td>{{ $item_receita->produto()->get()[0]->nmproduto  }}</td>
+                <td>{{ $item_receita->produto()->get()[0]->unidade }}</td>
+                <td>{{ $item_receita->produto()->get()[0]->precof }}</td>
                 <td>R$0,00</td>
                 <td class="text-center"><a href="{{ route('produto-id', ['id' => $produto->cdproduto]) }}"><i class="material-icons text-secondary">edit</i></a></td>
             </tr>
@@ -26,4 +31,5 @@
 
         </tbody>
     </table>
+
 @endsection

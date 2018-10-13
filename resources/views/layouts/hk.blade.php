@@ -82,27 +82,36 @@
                                         <a href="#">Pedidos</a>
                                     </li>
                                 </ul>
+                                <ul>
+                                    <li>
+                                        <a href="{{ url('housekeeping/relatorios/lucroporproduto') }}">Lucro por produto</a>
+                                    </li>
+                                </ul>
                             </div>
                         </li>
-                        <li class="header-menu">
-                            <span>Cadastros</span>
-                        </li>
-                        <li>
-                            <a href="{{ url('housekeeping/unidades') }}">
-                                <i class="far fa-building"></i>
-                                <span>Unidade</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('housekeeping/clientes') }}">
-                                <i class="far fa-id-badge"></i>
-                                <span>Cliente</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('housekeeping/produtos') }}">
+                        <li class="sidebar-dropdown">
+                            <a href="#">
                                 <i class="fas fa-boxes"></i>
-                                <span>Produto</span>
+                                <span>Cadastros</span>
+                            </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <a href="{{ url('housekeeping/unidades') }}">Unidade</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url('housekeeping/clientes') }}">Cliente</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url('housekeeping/produtos') }}">Produto</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="{{ url('housekeeping/estoque') }}">
+                                <i class="fas fa-dolly"></i>
+                                <span>Estoque</span>
                             </a>
                         </li>
                         <li class="header-menu">

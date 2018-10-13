@@ -4,48 +4,92 @@
             :show="carregando"
             :label="label">
         </loading>
-        <div class="card-header">
-            <div class="row">
-                <div class="col-sm-11">
-                    <h2><span class="align-bottom">Pedidos pendentes</span></h2>
+
+        <transition name="fade">
+            <div v-if="widget.mode === 'view'">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <h2><span class="align-bottom">Pedidos pendentes</span></h2>
+                        </div>
+                        <div class="col-sm-3 text-right">
+                            <button v-on:click="widget.mode = 'add'" type="button" class="btn btn-success btn-sm text-white">Novo Pedido</button>
+                            <button v-on:click="buscarPedidos" type="button" class="btn btn-info btn-sm text-white">Atualizar</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-sm-1 text-right">
-                    <button v-on:click="buscarPedidos" type="button" class="btn btn-info btn-sm text-white">Atualizar</button>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Código</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Telefone</th>
+                            <th scope="col">Data</th>
+                            <th scope="col1">Total</th>
+                            <th scope="col">Editar</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <!--@foreach (\App\Pedido::getPedidosPendentes() as $pedido)-->
+                        <tr v-for="pedido in pedidos">
+                            <td>{{ pedido.pedido_id }}</td>
+                            <td>{{ pedido.cliente_nome }}</td>
+                            <td>{{ pedido.cliente_telefone }}</td>
+                            <td>{{ pedido.dt_br }}</td>
+                            <td>{{ pedido.total  }}</td>
+                            <td><a v-bind:href="'pedido/'+pedido.pedido_id+'/'+pedido.unidade_id"><i class="material-icons text-secondary">edit</i></a>
+                                <a href="#" v-on:click="finalizarPedido(pedido.pedido_id, pedido.unidade_id)"><i class="material-icons text-danger">close</i></a></td>
+                        </tr>
+                        <!--@endforeach-->
+
+                        </tbody>
+                    </table>
+                    <div class="text-right">
+                        <a class="btn btn-secondary" href="exportar">Exportar pedidos</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card-body">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">Código</th>
-                    <th scope="col">Cliente</th>
-                    <th scope="col">Telefone</th>
-                    <th scope="col">Data</th>
-                    <th scope="col1">Total</th>
-                    <th scope="col">Editar</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                <!--@foreach (\App\Pedido::getPedidosPendentes() as $pedido)-->
-                <tr v-for="pedido in pedidos">
-                    <td>{{ pedido.pedido_id }}</td>
-                    <td>{{ pedido.cliente_nome }}</td>
-                    <td>{{ pedido.cliente_telefone }}</td>
-                    <td>{{ pedido.dt_br }}</td>
-                    <td>{{ pedido.total  }}</td>
-                    <td><a v-bind:href="'pedido/'+pedido.pedido_id+'/'+pedido.unidade_id"><i class="material-icons text-secondary">edit</i></a>
-                        <a href="#" v-on:click="finalizarPedido(pedido.pedido_id, pedido.unidade_id)"><i class="material-icons text-danger">close</i></a></td>
-                </tr>
-                <!--@endforeach-->
-
-                </tbody>
-            </table>
-            <div class="text-right">
-                <a class="btn btn-secondary" href="exportar">Exportar pedidos</a>
+            <div v-if="widget.mode === 'add'">
+                <div class="card-header bg-green-lighten3">
+                    <div class="row">
+                        <div class="col-sm-11">
+                            <h2><span class="align-bottom">Novo Pedido</span></h2>
+                        </div>
+                        <div class="col-sm-1 text-right">
+                            <button v-on:click="widget.mode = 'view'" type="button" class="btn btn-danger btn-sm text-white">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="logout-form">
+                        <div class="form-group">
+                            <label for="id_cliente">Cliente</label>
+                            <select id="id_cliente" name="id_cliente" class="custom-select">
+                                <option selected>Escolha um cliente</option>
+                                <option value="1">Teste</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cdproduto">Item</label>
+                            <select id="cdproduto" name="cdproduto" class="custom-select">
+                                <option selected>Escolha um produto</option>
+                                <option value="1">teste</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantidade">Quantidade</label>
+                            <input required type="number" name="quantidade" class="form-control" id="quantidade">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Cadastrar
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
+        </transition>
+
     </div>
 </template>
 
@@ -57,6 +101,9 @@
                 label: 'Aguarde...',
                 pedidos: [],
                 overlay: true,
+                widget: {
+                    'mode': 'view'
+                }
             }
         },
         mounted() {

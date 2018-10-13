@@ -71,8 +71,6 @@ Route::namespace('Housekeeping')->group(function () {
         Route::view('adicionar-licenca', 'hk.adicionar-licenca')->middleware('auth', 'permissao');
         Route::post('adicionar-licenca',  'UnidadeController@adicionarLicenca')->name('adicionar-licenca')->middleware('auth', 'permissao');
 
-
-
         Route::namespace('Usuario')->group(function () {
 
             Route::prefix('usuarios')->group(function () {
@@ -89,10 +87,24 @@ Route::namespace('Housekeeping')->group(function () {
 
             Route::prefix('produtos')->group(function () {
 
-                Route::get('', 'ProdutoController@index')->name('produtos');
+                Route::get('/{vue_capture?}', function () {
+                    return view('hk.produto.componente-produto');
+                })->where('vue_capture', '[\/\w\.-]*');
+//                Route::get('', 'ProdutoController@index')->name('produtos');
                 Route::view('cadastro', 'hk.produto.cadastrar-produto');
                 Route::post('cadastro',  'ProdutoController@cadastrar')->name('cadastrar-produto');
+                Route::get('editar-produto/{id}', 'ProdutoController@indexEditar')->name('produto-id');
+            });
 
+        });
+
+        Route::namespace('Estoque')->group(function () {
+
+            Route::prefix('estoque')->group(function () {
+
+                Route::get('/{vue_capture?}', function () {
+                    return view('hk.estoque.componente-estoque');
+                })->where('vue_capture', '[\/\w\.-]*');
             });
 
         });
@@ -126,8 +138,50 @@ Route::namespace('Housekeeping')->group(function () {
             });
 
         });
+
+        Route::namespace('Relatorio')->group(function () {
+
+            Route::prefix('relatorios')->group(function () {
+
+                Route::get('lucroporproduto', 'RelatorioController@lucroPorProduto');
+
+            });
+
+        });
     });
 
+});
+
+Route::group(['prefix' => 'api',  'middleware' => ['auth', 'permissao']], function() {
+
+    Route::namespace('Housekeeping')->group(function () {
+
+        Route::namespace('Produto')->group(function () {
+
+            Route::prefix('produtos')->group(function () {
+
+                Route::get('produtos', 'ProdutoController@getProdutosJson');
+                Route::get('{cdproduto}', 'ProdutoController@getProdutoJson');
+                Route::post('adicionarreceita', 'ProdutoController@addReceita');
+                Route::post('adicionarproduto', 'ProdutoController@addProduto');
+                Route::post('editarproduto', 'ProdutoController@editProduto');
+                Route::post('excluircomposicao', 'ProdutoController@excluirComposicaoProduto');
+            });
+
+        });
+
+        Route::namespace('Estoque')->group(function () {
+
+            Route::prefix('estoque')->group(function () {
+
+                Route::get('movimentacoes', 'EstoqueController@getUltimasMovimentacoes');
+                Route::post('novolancamento', 'EstoqueController@novoLancamento');
+                Route::get('lancamento/{cdproduto}', 'EstoqueController@getLancamento');
+                Route::post('lancamento/excluirlancamento', 'EstoqueController@excluirLancamento');
+            });
+
+        });
+    });
 });
 
 Route::namespace('Management')->group(function () {

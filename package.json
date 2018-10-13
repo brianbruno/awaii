@@ -25,6 +25,8 @@
         "moment": "^2.22.2",
         "pusher-js": "^4.3.1",
         "toastr": "^2.1.4",
-        "vue-full-loading": "^1.2.1"
+        "vue-full-loading": "^1.2.1",
+        "vue-router": "^3.0.1",
+        "vue-select": "^2.5.1"
     }
 }
