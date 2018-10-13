@@ -6,7 +6,16 @@
         </loading>
         <produto-nav></produto-nav>
         <div class="card">
-            <div class="card-body">
+            <div class="input-group">
+                <input type="text" v-model="busca" class="form-control form-control-lg" id="preco" placeholder="Buscar...">
+                <select id="tipo" v-model="tipo" class="form-control form-control-lg" v-on:change="filtrarProdutos">
+                    <option value="T" selected>Todos</option>
+                    <option value="V">Venda</option>
+                    <option value="C">Compra</option>
+                </select>
+            </div>
+
+            <div class="card-body table-responsive">
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -19,16 +28,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="produto in produtos" v-on:click="clickProduto(produto.cdproduto)">
-                        <td>{{ produto.cdproduto }}</td>
-                        <td>{{ produto.nmproduto }}</td>
-                        <td v-if="produto.tipo === 'C'" class="text-center text-success"><i class="fas fa-arrow-circle-down"></i></td>
-                        <td v-if="produto.tipo === 'V'" class="text-center text-danger"><i class="fas fa-arrow-circle-up"></i></td>
-                        <td>{{ produto.unidadeLabel }}</td>
-                        <td>{{ produto.precof }}</td>
-                        <td class="text-center">{{ produto.precocustof }}</td>
-                    </tr>
+                        <tr v-for="produto in produtos" v-on:click="clickProduto(produto.cdproduto)">
+                            <td>{{ produto.cdproduto }}</td>
+                            <td>{{ produto.nmproduto }}</td>
+                            <td v-if="produto.tipo === 'C'" class="text-center text-success"><i class="fas fa-arrow-circle-down"></i></td>
+                            <td v-if="produto.tipo === 'V'" class="text-center text-danger"><i class="fas fa-arrow-circle-up"></i></td>
+                            <td>{{ produto.unidadeLabel }}</td>
+                            <td>{{ produto.precof }}</td>
+                            <td class="text-center">{{ produto.precocustof }}</td>
+                        </tr>
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -41,10 +51,22 @@
                 produtos: {},
                 carregando: false,
                 label: 'Carregando...',
+                busca: '',
+                tipo: 'T',
+                backupProdutos: {}
             };
         },
         mounted() {
             this.buscarProdutos();
+        },
+        watch: {
+            busca: function () {
+                this.filtrarProdutos();
+                this.debouncedGetAnswer()
+            }
+        },
+        created: function () {
+            this.debouncedGetAnswer = _.debounce(this.filtrarProdutos, 500)
         },
         methods: {
             buscarProdutos: function () {
@@ -60,6 +82,7 @@
                         Vue.set(self.produtos, i, item);
                         i++;
                     });
+                    self.backupProdutos = self.produtos;
                 }).finally(() => {
                     this.carregando = false;
                 });
@@ -68,6 +91,18 @@
             },
             clickProduto: function (cdproduto) {
                 router.push({ name: "produto", params: { cdproduto: cdproduto }});
+            },
+            filtrarProdutos: function() {
+                const self = this;
+                self.produtos = [];
+                let i = 0;
+                self.backupProdutos.forEach(function(item) {
+                    if ((item.cdproduto.includes(self.busca) || item.nmproduto.includes(self.busca))
+                        && (item.tipo === self.tipo || self.tipo === 'T')) {
+                        Vue.set(self.produtos, i, item);
+                        i++;
+                    }
+                });
             }
         }
     };

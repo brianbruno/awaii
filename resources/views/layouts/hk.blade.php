@@ -86,6 +86,9 @@
                                     <li>
                                         <a href="{{ url('housekeeping/relatorios/lucroporproduto') }}">Lucro por produto</a>
                                     </li>
+                                    <li>
+                                        <a href="{{ url('housekeeping/relatorios/movimentacaoestoque') }}">Movimentação de Estoque</a>
+                                    </li>
                                 </ul>
                             </div>
                         </li>

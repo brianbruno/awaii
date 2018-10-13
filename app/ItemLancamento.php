@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 class ItemLancamento extends Model {
 
-    protected $appends = ['nmproduto', 'precof', 'unidadeLabel'];
+    protected $appends = ['nmproduto', 'precof', 'unidadeLabel', 'dt_lancamento', 'dt_lancamentof'];
 
     public function lancamento() {
         return $this->belongsTo(Lancamento::class, 'lancamento', 'id');
@@ -22,8 +22,16 @@ class ItemLancamento extends Model {
         return $this->produto()->get()[0]->nmproduto;
     }
 
+    public function getDt_lancamentoAttribute() {
+        return $this->lancamento()->get()[0]->dt_lancamento;
+    }
+
     public function getUnidadeLabelAttribute() {
         return $this->produto()->get()[0]->getUnidadeLabelAttribute();
+    }
+
+    public function getDt_lancamentofAttribute() {
+        return $this->produto()->get()[0]->getDt_lancamentofAttribute();
     }
 
     public function getPrecofAttribute() {
@@ -45,6 +53,15 @@ class ItemLancamento extends Model {
 
         return $vrCusto;
 
+    }
+
+    public static function getMovimentacaoEstoqueMes(){
+        return DB::table('item_lancamentos')
+            ->select('produtos.cdproduto', 'produtos.nmproduto', 'lancamentos.id', DB::raw('DATE_FORMAT(lancamentos.dt_lancamento,\'%d/%m/%Y %H:%i:%s\') as dt_br'),
+                'item_lancamentos.quantidade', 'item_lancamentos.precounitario')
+            ->join('produtos', 'produtos.cdproduto', '=', 'item_lancamentos.cdproduto')
+            ->join('lancamentos', 'item_lancamentos.lancamento', '=', 'lancamentos.id')
+            ->whereDate('dt_lancamento', '>', Carbon::now()->subDays(30)->toDateTimeString())->get();
     }
 
 }

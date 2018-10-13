@@ -60653,19 +60653,41 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
             produtos: {},
             carregando: false,
-            label: 'Carregando...'
+            label: 'Carregando...',
+            busca: '',
+            tipo: 'T',
+            backupProdutos: {}
         };
     },
     mounted: function mounted() {
         this.buscarProdutos();
     },
 
+    watch: {
+        busca: function busca() {
+            this.filtrarProdutos();
+            this.debouncedGetAnswer();
+        }
+    },
+    created: function created() {
+        this.debouncedGetAnswer = _.debounce(this.filtrarProdutos, 500);
+    },
     methods: {
         buscarProdutos: function buscarProdutos() {
             var _this = this;
@@ -60682,6 +60704,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     Vue.set(self.produtos, i, item);
                     i++;
                 });
+                self.backupProdutos = self.produtos;
             }).finally(function () {
                 _this.carregando = false;
             });
@@ -60690,6 +60713,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         clickProduto: function clickProduto(cdproduto) {
             router.push({ name: "produto", params: { cdproduto: cdproduto } });
+        },
+        filtrarProdutos: function filtrarProdutos() {
+            var self = this;
+            self.produtos = [];
+            var i = 0;
+            self.backupProdutos.forEach(function (item) {
+                if ((item.cdproduto.includes(self.busca) || item.nmproduto.includes(self.busca)) && (item.tipo === self.tipo || self.tipo === 'T')) {
+                    Vue.set(self.produtos, i, item);
+                    i++;
+                }
+            });
         }
     }
 });
@@ -60711,7 +60745,74 @@ var render = function() {
       _c("produto-nav"),
       _vm._v(" "),
       _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-body" }, [
+        _c("div", { staticClass: "input-group" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.busca,
+                expression: "busca"
+              }
+            ],
+            staticClass: "form-control form-control-lg",
+            attrs: { type: "text", id: "preco", placeholder: "Buscar..." },
+            domProps: { value: _vm.busca },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.busca = $event.target.value
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c(
+            "select",
+            {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.tipo,
+                  expression: "tipo"
+                }
+              ],
+              staticClass: "form-control form-control-lg",
+              attrs: { id: "tipo" },
+              on: {
+                change: [
+                  function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.tipo = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  },
+                  _vm.filtrarProdutos
+                ]
+              }
+            },
+            [
+              _c("option", { attrs: { value: "T", selected: "" } }, [
+                _vm._v("Todos")
+              ]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "V" } }, [_vm._v("Venda")]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "C" } }, [_vm._v("Compra")])
+            ]
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-body table-responsive" }, [
           _c("table", { staticClass: "table table-hover" }, [
             _vm._m(0),
             _vm._v(" "),
@@ -61407,7 +61508,7 @@ var render = function() {
       _c("estoque-nav"),
       _vm._v(" "),
       _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-body" }, [
+        _c("div", { staticClass: "card-body table-responsive" }, [
           _c("table", { staticClass: "table table-hover" }, [
             _vm._m(0),
             _vm._v(" "),
@@ -62524,6 +62625,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -62642,7 +62745,7 @@ var render = function() {
         _c("div", { staticClass: "card-body" }, [
           _c("form", [
             _c("div", { staticClass: "row" }, [
-              _c("div", { staticClass: "col-4" }, [
+              _c("div", { staticClass: "col-sm-4 col-md-4" }, [
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", { attrs: { for: "tipo" } }, [
                     _vm._v("Tipo de lançamento")
@@ -62800,34 +62903,36 @@ var render = function() {
           _vm._v(" "),
           _c("hr"),
           _vm._v(" "),
-          _vm.novoLancamento.produtos.length > 0
-            ? _c("table", { staticClass: "table table-hover" }, [
-                _vm._m(0),
-                _vm._v(" "),
-                _c(
-                  "tbody",
-                  _vm._l(_vm.novoLancamento.produtos, function(produto) {
-                    return _c("tr", [
-                      _c("td", [_vm._v(_vm._s(produto.labelproduto))]),
-                      _vm._v(" "),
-                      _c("td", { staticClass: "text-center" }, [
-                        _vm._v(_vm._s(produto.quantidade))
-                      ]),
-                      _vm._v(" "),
-                      _c("td", { staticClass: "text-center" }, [
-                        _vm._v(_vm._s(produto.precounitario))
-                      ]),
-                      _vm._v(" "),
-                      _c("td", { staticClass: "text-center" }, [
-                        _vm._v(_vm._s(produto.total))
-                      ]),
-                      _vm._v(" "),
-                      _vm._m(1, true)
-                    ])
-                  })
-                )
-              ])
-            : _vm._e()
+          _c("div", { staticClass: "table-responsive" }, [
+            _vm.novoLancamento.produtos.length > 0
+              ? _c("table", { staticClass: "table table-hover" }, [
+                  _vm._m(0),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.novoLancamento.produtos, function(produto) {
+                      return _c("tr", [
+                        _c("td", [_vm._v(_vm._s(produto.labelproduto))]),
+                        _vm._v(" "),
+                        _c("td", { staticClass: "text-center" }, [
+                          _vm._v(_vm._s(produto.quantidade))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { staticClass: "text-center" }, [
+                          _vm._v(_vm._s(produto.precounitario))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { staticClass: "text-center" }, [
+                          _vm._v(_vm._s(produto.total))
+                        ]),
+                        _vm._v(" "),
+                        _vm._m(1, true)
+                      ])
+                    })
+                  )
+                ])
+              : _vm._e()
+          ])
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "card-footer text-muted text-right" }, [
@@ -65060,8 +65165,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -65098,71 +65201,56 @@ var render = function() {
       "nav",
       { staticClass: "navbar navbar-expand-lg navbar-light bg-light" },
       [
-        _c(
-          "div",
-          {
-            staticClass: "collapse navbar-collapse",
-            attrs: { id: "navbarSupportedContent" }
-          },
-          [
-            _c("ul", { staticClass: "navbar-nav mr-auto" }, [
-              _c(
-                "li",
-                {
-                  staticClass: "nav-item",
-                  class: { active: _vm.current.name === "estoque" }
-                },
-                [
-                  _c(
-                    "router-link",
-                    { attrs: { to: "/housekeeping/estoque" } },
-                    [
-                      _c("a", { staticClass: "nav-link" }, [
-                        _vm._v("Movimentação "),
-                        _c("span", { staticClass: "sr-only" }, [
-                          _vm._v("(current)")
-                        ])
-                      ])
-                    ]
-                  )
-                ],
-                1
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "text-right" }, [
-              _vm.current.name === "lancamento"
-                ? _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-info text-white",
-                      attrs: { type: "button" },
-                      on: {
-                        click: function($event) {
-                          _vm.voltar()
-                        }
-                      }
-                    },
-                    [_vm._v("Voltar")]
-                  )
-                : _vm._e(),
-              _vm._v(" "),
-              _c(
+        _c("ul", { staticClass: "navbar-nav" }, [
+          _c(
+            "li",
+            {
+              staticClass: "nav-item",
+              class: { active: _vm.current.name === "estoque" }
+            },
+            [
+              _c("router-link", { attrs: { to: "/housekeeping/estoque" } }, [
+                _c("a", { staticClass: "nav-link" }, [
+                  _vm._v("Movimentação "),
+                  _c("span", { staticClass: "sr-only" }, [_vm._v("(current)")])
+                ])
+              ])
+            ],
+            1
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "text-right" }, [
+          _vm.current.name === "lancamento"
+            ? _c(
                 "button",
                 {
                   staticClass: "btn btn-info text-white",
                   attrs: { type: "button" },
                   on: {
                     click: function($event) {
-                      _vm.novoLancamento()
+                      _vm.voltar()
                     }
                   }
                 },
-                [_vm._v("Novo Lançamento")]
+                [_vm._v("Voltar")]
               )
-            ])
-          ]
-        )
+            : _vm._e(),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-info text-white",
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  _vm.novoLancamento()
+                }
+              }
+            },
+            [_vm._v("Novo Lançamento")]
+          )
+        ])
       ]
     )
   ])

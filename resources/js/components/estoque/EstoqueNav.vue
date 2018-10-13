@@ -1,8 +1,7 @@
 <template>
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav">
                     <li class="nav-item" v-bind:class="{ active: current.name === 'estoque' }">
                         <router-link to="/housekeeping/estoque"><a class="nav-link">Movimentação <span class="sr-only">(current)</span></a></router-link>
                     </li>
@@ -11,7 +10,6 @@
                     <button v-if="current.name === 'lancamento'" type="button" class="btn btn-info text-white" v-on:click="voltar()">Voltar</button>
                     <button type="button" class="btn btn-info text-white" v-on:click="novoLancamento()">Novo Lançamento</button>
                 </div>
-            </div>
         </nav>
     </div>
 </template>

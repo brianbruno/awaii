@@ -144,7 +144,9 @@ Route::namespace('Housekeeping')->group(function () {
             Route::prefix('relatorios')->group(function () {
 
                 Route::get('lucroporproduto', 'RelatorioController@lucroPorProduto');
-
+                Route::get('lucroporproduto/export', 'RelatorioController@lucroPorProdutoExport');
+                Route::get('movimentacaoestoque', 'RelatorioController@movimentacaoEstoque');
+                Route::get('movimentacaoestoque/export', 'RelatorioController@movimentacaoEstoqueExport');
             });
 
         });

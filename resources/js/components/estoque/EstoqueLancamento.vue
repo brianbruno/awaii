@@ -9,7 +9,7 @@
             <div class="card-body">
                 <form>
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-sm-4 col-md-4">
                             <div class="form-group">
                                 <label for="tipo">Tipo de lançamento</label>
                                 <select id="tipo" v-model="novoLancamento.tipo" class="form-control">
@@ -41,30 +41,32 @@
                     </form>
                 </form>
                 <hr>
-                <table class="table table-hover" v-if="novoLancamento.produtos.length > 0">
-                    <thead>
-                    <tr>
-                        <th>Produto</th>
-                        <th class="text-center">Quantidade</th>
-                        <th class="text-center">Preço</th>
-                        <th class="text-center">Total</th>
-                        <th class="text-center">Remover</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="produto in novoLancamento.produtos">
-                        <td>{{ produto.labelproduto }}</td>
-                        <td class="text-center">{{ produto.quantidade }}</td>
-                        <td class="text-center">{{ produto.precounitario }}</td>
-                        <td class="text-center">{{ produto.total }}</td>
-                        <td class="text-center">
-                            <a href="#">
-                                <i class="material-icons text-danger">close</i>
-                            </a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-hover" v-if="novoLancamento.produtos.length > 0">
+                        <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th class="text-center">Quantidade</th>
+                            <th class="text-center">Preço</th>
+                            <th class="text-center">Total</th>
+                            <th class="text-center">Remover</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="produto in novoLancamento.produtos">
+                            <td>{{ produto.labelproduto }}</td>
+                            <td class="text-center">{{ produto.quantidade }}</td>
+                            <td class="text-center">{{ produto.precounitario }}</td>
+                            <td class="text-center">{{ produto.total }}</td>
+                            <td class="text-center">
+                                <a href="#">
+                                    <i class="material-icons text-danger">close</i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="card-footer text-muted text-right">
                 <button type="button" class="btn btn-success" v-on:click="salvarLancamento">Salvar</button>
@@ -165,10 +167,10 @@
             },
             limpar: function () {
                 this.novoProduto.selectProduto.value =
-                this.novoProduto.selectProduto.label =
-                this.novoProduto.precounitario =
-                this.novoProduto.quantidade =
-                this.novoProduto.precounitario  = '';
+                    this.novoProduto.selectProduto.label =
+                        this.novoProduto.precounitario =
+                            this.novoProduto.quantidade =
+                                this.novoProduto.precounitario  = '';
             }
         }
     }
