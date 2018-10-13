@@ -60937,7 +60937,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }).finally(function () {
                     _this.carregando = false;
                     _this.novoProduto.nmproduto = '';
-                    _this.novoProduto.cdproduto = '';
+                    _this.novoProduto.cdproduto = Math.floor(Date.now() / 1000);
                     _this.novoProduto.unidade = '';
                     _this.novoProduto.preco = '';
                 });

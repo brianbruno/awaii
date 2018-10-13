@@ -82,7 +82,7 @@
                     }).finally(() => {
                         this.carregando = false;
                         this.novoProduto.nmproduto = '';
-                        this.novoProduto.cdproduto = '';
+                        this.novoProduto.cdproduto = Math.floor(Date.now() / 1000);
                         this.novoProduto.unidade = '';
                         this.novoProduto.preco = '';
                     });
