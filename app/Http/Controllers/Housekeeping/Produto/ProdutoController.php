@@ -45,7 +45,6 @@ class ProdutoController {
             'cdproduto' => 'required|unique:produtos|max:10',
             'nmproduto' => 'required|max:100',
             'unidade' => 'required|max:2',
-            'preco' => 'required|numeric',
         ]);
 
         $produto = new Produto();
@@ -84,7 +83,6 @@ class ProdutoController {
             'cdproduto' => 'required|max:10',
             'nmproduto' => 'required|max:100',
             'unidade' => 'required|max:2',
-            'preco' => 'required|numeric',
         ]);
 
         if (!empty($produto)) {

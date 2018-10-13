@@ -12,18 +12,21 @@
                     <tr>
                         <th scope="col">Cd. Produto</th>
                         <th scope="col">Nome Produto</th>
+                        <th scope="col" class="text-center">Tipo</th>
                         <th scope="col">Unidade</th>
                         <th scope="col">Preço</th>
-                        <th scope="col">Preço de Custo</th>
+                        <th scope="col" class="text-center">Preço de Custo</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="produto in produtos" v-on:click="clickProduto(produto.cdproduto)">
                         <td>{{ produto.cdproduto }}</td>
                         <td>{{ produto.nmproduto }}</td>
+                        <td v-if="produto.tipo === 'C'" class="text-center text-success"><i class="fas fa-arrow-circle-down"></i></td>
+                        <td v-if="produto.tipo === 'V'" class="text-center text-danger"><i class="fas fa-arrow-circle-up"></i></td>
                         <td>{{ produto.unidadeLabel }}</td>
                         <td>{{ produto.precof }}</td>
-                        <td class="text-center">R$0,00</td>
+                        <td class="text-center">{{ produto.precocustof }}</td>
                     </tr>
                     </tbody>
                 </table>

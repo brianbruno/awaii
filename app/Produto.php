@@ -38,7 +38,8 @@ class Produto extends Model {
         $unidades = array(
             'KG' => 'Quilos',
             'G'  => 'Gramas',
-            'UN' => 'Unidade'
+            'UN' => 'Unidade',
+            'ML' => 'Mililitros'
         );
 
         return $unidades[$this->unidade];

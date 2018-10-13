@@ -48,14 +48,13 @@ class EstoqueController {
 
                     if (!empty($receita) && sizeof($receita) > 0) {
                         foreach ($receita as $item) {
-                            $prodReceita = Produto::find($item['cdproduto_filho']);
+//                            $prodReceita = Produto::find($item['cdproduto_filho']);
 
                             $parametros['cdproduto'] = $item['cdproduto_filho'];
                             $parametros['quantidade'] = $item['quantidade'] * $produto['quantidade'];
 
-                            if ($prodReceita->unidade == 'G') {
-                                $parametros['precounitario'] = $produto['precounitario']/$item['quantidade'];
-                            }
+                            $parametros['precounitario'] = $produto['precounitario']/$item['quantidade'];
+
                             $this->addItemLancamento($parametros);
                         }
                     }

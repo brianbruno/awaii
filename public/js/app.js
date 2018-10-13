@@ -60650,6 +60650,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -60729,11 +60732,25 @@ var render = function() {
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(produto.nmproduto))]),
                     _vm._v(" "),
+                    produto.tipo === "C"
+                      ? _c("td", { staticClass: "text-center text-success" }, [
+                          _c("i", { staticClass: "fas fa-arrow-circle-down" })
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    produto.tipo === "V"
+                      ? _c("td", { staticClass: "text-center text-danger" }, [
+                          _c("i", { staticClass: "fas fa-arrow-circle-up" })
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(produto.unidadeLabel))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(produto.precof))]),
                     _vm._v(" "),
-                    _c("td", { staticClass: "text-center" }, [_vm._v("R$0,00")])
+                    _c("td", { staticClass: "text-center" }, [
+                      _vm._v(_vm._s(produto.precocustof))
+                    ])
                   ]
                 )
               })
@@ -60756,11 +60773,17 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Nome Produto")]),
         _vm._v(" "),
+        _c("th", { staticClass: "text-center", attrs: { scope: "col" } }, [
+          _vm._v("Tipo")
+        ]),
+        _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Unidade")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Preço")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Preço de Custo")])
+        _c("th", { staticClass: "text-center", attrs: { scope: "col" } }, [
+          _vm._v("Preço de Custo")
+        ])
       ])
     ])
   }
@@ -60878,6 +60901,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -60886,11 +60910,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             label: 'Carregando...',
             novoProduto: {
                 nmproduto: '',
-                cdproduto: '',
+                cdproduto: Math.floor(Date.now() / 1000),
                 unidade: '',
                 preco: ''
             }
         };
+    },
+    mounted: function mounted() {
+        this.autoFill();
     },
 
     methods: {
@@ -60900,7 +60927,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var self = this;
             this.carregando = true;
 
-            if (this.novoProduto.cdproduto && this.novoProduto.nmproduto && this.novoProduto.unidade && this.novoProduto.preco) {
+            if (this.novoProduto.cdproduto && this.novoProduto.nmproduto && this.novoProduto.unidade) {
                 axios.post('/api/produtos/adicionarproduto', this.novoProduto).then(function (response) {
                     if (response.data.resultado) {
                         self.showNotification('Produto cadastrado com sucesso!', 'sucesso');
@@ -61023,35 +61050,53 @@ var render = function() {
             _c("div", { staticClass: "form-group" }, [
               _c("div", { staticClass: "row" }, [
                 _c("div", { staticClass: "col-4" }, [
-                  _c("div", { staticClass: "form-group" }, [
-                    _c("label", { attrs: { for: "preco" } }, [_vm._v("Preço")]),
-                    _vm._v(" "),
-                    _c("input", {
+                  _c("label", { attrs: { for: "tipo" } }, [
+                    _vm._v("Tipo de produto")
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
                       directives: [
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.novoProduto.preco,
-                          expression: "novoProduto.preco"
+                          value: _vm.novoProduto.tipo,
+                          expression: "novoProduto.tipo"
                         }
                       ],
                       staticClass: "form-control",
-                      attrs: { type: "number", id: "preco" },
-                      domProps: { value: _vm.novoProduto.preco },
+                      attrs: { id: "tipo" },
                       on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
                           _vm.$set(
                             _vm.novoProduto,
-                            "preco",
-                            $event.target.value
+                            "tipo",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
                           )
                         }
                       }
-                    })
-                  ])
+                    },
+                    [
+                      _c("option", { attrs: { value: "V" } }, [
+                        _vm._v("Venda")
+                      ]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "C" } }, [
+                        _vm._v("Compra")
+                      ])
+                    ]
+                  )
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "col-4" }, [
@@ -61103,59 +61148,49 @@ var render = function() {
                       _vm._v(" "),
                       _c("option", { attrs: { value: "UN" } }, [
                         _vm._v("Unidade (UN)")
+                      ]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "ML" } }, [
+                        _vm._v("Mililitros (ML)")
                       ])
                     ]
                   )
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "col-4" }, [
-                  _c("label", { attrs: { for: "tipo" } }, [
-                    _vm._v("Tipo de produto")
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", { attrs: { for: "preco" } }, [_vm._v("Preço")]),
+                    _vm._v(" "),
+                    _c("input", {
                       directives: [
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.novoProduto.tipo,
-                          expression: "novoProduto.tipo"
+                          value: _vm.novoProduto.preco,
+                          expression: "novoProduto.preco"
                         }
                       ],
                       staticClass: "form-control",
-                      attrs: { id: "tipo" },
+                      attrs: {
+                        type: "number",
+                        disabled: _vm.novoProduto.tipo !== "V",
+                        id: "preco"
+                      },
+                      domProps: { value: _vm.novoProduto.preco },
                       on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
                           _vm.$set(
                             _vm.novoProduto,
-                            "tipo",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
+                            "preco",
+                            $event.target.value
                           )
                         }
                       }
-                    },
-                    [
-                      _c("option", { attrs: { value: "V" } }, [
-                        _vm._v("Venda")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "C" } }, [
-                        _vm._v("Compra")
-                      ])
-                    ]
-                  )
+                    })
+                  ])
                 ])
               ])
             ])
@@ -61687,6 +61722,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }, {
                 'value': 'UN',
                 'label': 'Unidade'
+            }, {
+                'value': 'ML',
+                'label': 'Mililitros'
             }]
         };
     },

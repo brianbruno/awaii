@@ -144,6 +144,10 @@
                     {
                         'value': 'UN',
                         'label': 'Unidade'
+                    },
+                    {
+                        'value': 'ML',
+                        'label': 'Mililitros'
                     }
                 ]
             };

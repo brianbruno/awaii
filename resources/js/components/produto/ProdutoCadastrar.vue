@@ -19,10 +19,11 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-4">
-                                <div class="form-group">
-                                    <label for="preco">Preço</label>
-                                    <input type="number" v-model="novoProduto.preco" class="form-control" id="preco">
-                                </div>
+                                <label for="tipo">Tipo de produto</label>
+                                <select id="tipo" v-model="novoProduto.tipo" class="form-control">
+                                    <option value="V">Venda</option>
+                                    <option value="C">Compra</option>
+                                </select>
                             </div>
                             <div class="col-4">
                                 <label for="unidade">Unidade de produção</label>
@@ -30,14 +31,14 @@
                                     <option value="KG">Quilos (KG)</option>
                                     <option value="G">Gramas (G)</option>
                                     <option value="UN">Unidade (UN)</option>
+                                    <option value="ML">Mililitros (ML)</option>
                                 </select>
                             </div>
                             <div class="col-4">
-                                <label for="tipo">Tipo de produto</label>
-                                <select id="tipo" v-model="novoProduto.tipo" class="form-control">
-                                    <option value="V">Venda</option>
-                                    <option value="C">Compra</option>
-                                </select>
+                                <div class="form-group">
+                                    <label for="preco">Preço</label>
+                                    <input type="number" :disabled="novoProduto.tipo !== 'V'" v-model="novoProduto.preco" class="form-control" id="preco">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -57,18 +58,21 @@
                 label: 'Carregando...',
                 novoProduto: {
                     nmproduto: '',
-                    cdproduto: '',
+                    cdproduto: Math.floor(Date.now() / 1000),
                     unidade: '',
                     preco: '',
                 }
             };
+        },
+        mounted() {
+            this.autoFill();
         },
         methods: {
             salvarAdicionarProduto: function () {
                 const self = this;
                 this.carregando = true;
 
-                if (this.novoProduto.cdproduto && this.novoProduto.nmproduto && this.novoProduto.unidade && this.novoProduto.preco) {
+                if (this.novoProduto.cdproduto && this.novoProduto.nmproduto && this.novoProduto.unidade) {
                     axios.post('/api/produtos/adicionarproduto', this.novoProduto).then((response) => {
                         if (response.data.resultado) {
                             self.showNotification('Produto cadastrado com sucesso!', 'sucesso');
