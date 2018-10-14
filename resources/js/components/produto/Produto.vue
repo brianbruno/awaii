@@ -97,7 +97,7 @@
                 self.produtos = [];
                 let i = 0;
                 self.backupProdutos.forEach(function(item) {
-                    if ((item.cdproduto.includes(self.busca) || item.nmproduto.includes(self.busca))
+                    if ((item.cdproduto.toUpperCase().includes(self.busca.toUpperCase()) || item.nmproduto.toUpperCase().includes(self.busca.toUpperCase()))
                         && (item.tipo === self.tipo || self.tipo === 'T')) {
                         Vue.set(self.produtos, i, item);
                         i++;

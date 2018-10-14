@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Relatorios;
 use App\Pedido;
 
 class RelatorioPedidos extends Relatorio {
-    
+
   public $nome = "Relatório de Pedidos";
-  
+
   public function gerarRelatorio() {
-    $pedidos = Pedido::with('item_pedidos')->get()->toArray();
+    $pedidos = Pedido::with('item_pedidos')->get();
     var_dump($pedidos);die;
   }
-  
+
   public function enviarRelatorio() {
-    
+
   }
-  
+
 }

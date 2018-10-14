@@ -2,8 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\Relatorios\RelatorioLucroPorProduto;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\Relatorios\RelatorioMovimentacaoEstoque;
 use Illuminate\Console\Command;
-use App\Http\Controllers\Relatorios\RelatorioPedidos;
+use App\Mail\EnviarRelatorios as MailRelatorios;
+use Illuminate\Support\Facades\Storage;
 
 class EnviarRelatorios extends Command
 {
@@ -40,8 +44,10 @@ class EnviarRelatorios extends Command
     {
         $this->info('Envio de e-mails para os clientes.');
         $relatorios = [];
-        $relatorios[]  = new RelatorioPedidos();
-      
+        $relatorios[] = new RelatorioMovimentacaoEstoque();
+        $relatorios[] = new RelatorioLucroPorProduto();
+        $arquivos = [];
+
         $bar = $this->output->createProgressBar(sizeof($relatorios));
         // the finished part of the bar
         $bar->setBarCharacter('<comment>=</comment>');
@@ -49,14 +55,19 @@ class EnviarRelatorios extends Command
         $bar->setEmptyBarCharacter(' ');
         // the progress character
         $bar->setProgressCharacter('>');
-        
+
         $bar->start();
-      
+
         foreach ($relatorios as $relatorio) {
-          $relatorio->gerarRelatorio();
-          $relatorio->enviarRelatorio();
-          $bar->advance();
+            $arquivos[] = $relatorio->gerarRelatorio();
+            $bar->advance();
         }
+
+        Mail::to('contact@brian.place')->send(new MailRelatorios($arquivos));
+
+        foreach ($arquivos as $arquivo)
+            Storage::delete($arquivo);
+
         $bar->finish();
         $this->info('');
         $this->info('Operacao Realizada!');
