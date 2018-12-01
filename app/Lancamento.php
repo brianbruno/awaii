@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class Lancamento extends Model {
 
-    protected $appends = ['itensLancamento', 'tipoLabel', 'dt_lancamentof'];
+    protected $appends = ['itensLancamento', 'tipoLabel', 'dtlancamentof'];
 
     public function itens() {
         return $this->hasMany(ItemLancamento::class, 'lancamento', 'id');
@@ -29,7 +29,7 @@ class Lancamento extends Model {
         return $this->tipo  == 'S' ? 'Saída' : 'Entrada';
     }
 
-    public function getDt_lancamentofAttribute() {
+    public function getDtlancamentofAttribute() {
         return date('d/m/Y H:i:s', strtotime($this->dt_lancamento));
     }
 

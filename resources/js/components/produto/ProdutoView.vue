@@ -4,8 +4,10 @@
             :show="carregando"
             :label="label">
         </loading>
-        <produto-nav></produto-nav>
         <div class="card">
+            <div class="bg-dark">
+                <produto-nav></produto-nav>
+            </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <h2>{{ produto.nmproduto }}</h2>

@@ -6,7 +6,7 @@
  * Time: 19:17
  */
 
-namespace App\Http\Controllers\Pedido;
+namespace App\Http\Controllers\Housekeeping\Pedido;
 
 use App\Cliente;
 use App\Events\PedidoEntregue;
@@ -25,60 +25,6 @@ class PedidoController {
 
     public function index() {
         return view('system.pedido.index');
-    }
-
-    public function cadastrarIndex() {
-        return view('system.pedido.cadastrar-pedido', ['clientes' => Cliente::all(), 'produtos' => Produto::all()]);
-    }
-
-    public function cadastrar(Request $request) {
-        $validatedData = $request->validate([
-            'id_cliente' => 'required',
-            'cdproduto'  => 'required',
-            'quantidade' => 'required|numeric'
-        ]);
-
-
-        try {
-            DB::beginTransaction();
-
-            $contador = Pedido::CONTADOR.Auth::user()->unidade;
-
-            $novoCodigo = NovoCodigo::retrieve($contador);
-            $codigo = $novoCodigo->getProxCodigo();
-            $unidade = Auth::user()->unidade;
-
-            $pedido = new Pedido();
-            $pedido->id_cliente = $request->id_cliente;
-            $pedido->id = $codigo;
-            $pedido->unidade = $unidade;
-            $pedido->id_ultatu = Auth::user()->id;
-
-            $pedido->save();
-
-            $produto = Produto::find($request->cdproduto);
-
-            $itemPedido = new ItemPedido();
-            $itemPedido->id_pedido = $pedido->id;
-            $itemPedido->sequencial = 1;
-            $itemPedido->cdproduto = $produto->cdproduto;
-            $itemPedido->quantidade = $request->quantidade;
-            $itemPedido->preco = $produto->preco;
-            $itemPedido->total = $itemPedido->quantidade * $produto->preco;
-            $itemPedido->unidade = Auth::user()->unidade;
-
-            $itemPedido->save();
-            DB::commit();
-            event(new PedidoRealizado());
-            $response = redirect()->route('pedido-id', ['id' => $pedido->id]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $response = view('system.pedido.cadastrar-pedido', ['exception' => $e->getMessage(),
-                                                                      'produtos' => Produto::all(), 'stacktrace' => $e->getTraceAsString(),
-                                                                      'resultado' => false, 'clientes' => Cliente::all()]);
-        }
-
-        return $response;
     }
 
     public function infoPedido($id, $unidade = '') {
@@ -196,6 +142,78 @@ class PedidoController {
 
     public function finalizarJson($id, $unidade = '') {
         return $finalizarPedido = $this->finalizarPedidoFinal($id, $unidade);
+    }
+
+    public function novoPedidoApi(Request $request) {
+
+        $resultado = array(
+            'resultado' => false,
+            'mensagem'  => 'Erro ao realizar a operação',
+            'codigo'    => 1
+        );
+
+        $validatedData = $request->validate([
+            'produtos' => 'required',
+            'total'  => 'required'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $produtos = $request->produtos;
+
+            $unidade = Auth::user()->unidade;
+
+            $contador = Pedido::CONTADOR.$unidade;
+
+            $novoCodigo = NovoCodigo::retrieve($contador);
+            $codigo = $novoCodigo->getProxCodigo();
+
+            $pedido = new Pedido();
+            $pedido->id_cliente = null;
+            $pedido->id = $codigo;
+            $pedido->unidade = $unidade;
+            $pedido->id_ultatu = Auth::user()->id;
+
+            $pedido->save();
+
+            $sequencial = 1;
+
+            foreach($produtos as $produto_rqst) {
+                $produto = Produto::find($produto_rqst['cdproduto']);
+
+                $itemPedido = new ItemPedido();
+                $itemPedido->id_pedido = $pedido->id;
+                $itemPedido->sequencial = $sequencial;
+                $itemPedido->cdproduto = $produto->cdproduto;
+                $itemPedido->quantidade = $produto_rqst['quantidade'];
+                $itemPedido->preco = $produto->preco;
+                $itemPedido->total = $itemPedido->quantidade * $produto->preco;
+                $itemPedido->unidade = Auth::user()->unidade;
+
+                $itemPedido->save();
+
+                $sequencial++;
+            }
+
+            DB::commit();
+            event(new PedidoRealizado());
+
+            $resultado = array(
+                'resultado' => true,
+                'mensagem'  => 'Operação realizada com sucesso.',
+                'codigo'    => 200
+            );
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $resultado['mensagem'] = $e->getMessage();
+            $resultado['stacktrace'] = $e->getTraceAsString();
+            $resultado['line'] = $e->getLine();
+            $resultado['trace'] = $e->getTrace();
+            $resultado['code'] = $e->getCode();
+        }
+
+        return $resultado;
     }
 
 }

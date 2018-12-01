@@ -67,8 +67,14 @@
                         <li>
                             <a href="{{ url('housekeeping/') }}">
                                 <i class="fa fa-tachometer-alt"></i>
-                                <span>Dashbooard</span>
+                                <span>Dashboard</span>
                                 <span class="badge badge-pill badge-danger">New</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url('housekeeping/vendas') }}">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Vendas</span>
                             </a>
                         </li>
                         <li class="sidebar-dropdown">

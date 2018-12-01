@@ -4,8 +4,13 @@
             :show="carregando"
             :label="label">
         </loading>
-        <produto-nav></produto-nav>
         <div class="card">
+            <div class="bg-dark">
+                <produto-nav></produto-nav>
+            </div>
+            <div class="card-header">
+                Cadastro de Produto
+            </div>
             <div class="card-body">
                 <form>
                     <div class="form-group">
@@ -43,6 +48,8 @@
                         </div>
                     </div>
                 </form>
+            </div>
+            <div class="card-footer">
                 <div class="text-right">
                     <button v-on:click="salvarAdicionarProduto()" type="button" class="btn btn-success">Salvar</button>
                 </div>

@@ -4,15 +4,18 @@
             :show="carregando"
             :label="label">
         </loading>
-        <estoque-nav></estoque-nav>
         <div class="card">
+            <div class="bg-dark"><estoque-nav></estoque-nav></div>
+            <div class="card-header">
+                Lançamento de Estoque
+            </div>
             <div class="card-body">
                 <form>
                     <div class="row">
                         <div class="col-sm-4 col-md-4">
                             <div class="form-group">
                                 <label for="tipo">Tipo de lançamento</label>
-                                <select id="tipo" v-model="novoLancamento.tipo" class="form-control">
+                                <select id="tipo" v-model="novoLancamento.tipo" class="form-control" @change="trocarProdutos()">
                                     <option value="E">Entrada</option>
                                     <option value="S">Saída</option>
                                 </select>
@@ -24,19 +27,19 @@
                         <div class="row">
                             <div class="form-group col-sm-12 col-md-6">
                                 <label for="selectProduto">Produto</label>
-                                <v-select id="selectProduto" v-model="novoProduto.selectProduto" :options="produtos"></v-select>
+                                <v-select :disabled="!novoLancamento.tipo" id="selectProduto" v-model="novoProduto.selectProduto" :options="produtos"></v-select>
                             </div>
                             <div class="form-group col-sm-12 col-md-3">
                                 <label for="qtde">Quantidade</label>
-                                <input type="number" v-model="novoProduto.quantidade" class="form-control form-control-lg" id="qtde">
+                                <input :disabled="!novoLancamento.tipo" type="number" v-model="novoProduto.quantidade" class="form-control form-control-lg" id="qtde">
                             </div>
                             <div class="form-group col-sm-12 col-md-3">
                                 <label for="precounitario">Preço</label>
-                                <input type="number" class="form-control form-control-lg" id="precounitario" v-model="novoProduto.precounitario">
+                                <input :disabled="!novoLancamento.tipo" type="number" class="form-control form-control-lg" id="precounitario" v-model="novoProduto.precounitario">
                             </div>
                         </div>
                         <div class="text-center">
-                            <button id="button" type="button" class="btn btn-lg btn-warning" v-on:click="addProdutoLancamento">Confirmar</button>
+                            <button :disabled="!novoLancamento.tipo" id="button" type="button" class="btn btn-lg btn-warning" v-on:click="addProdutoLancamento">Confirmar</button>
                         </div>
                     </form>
                 </form>
@@ -93,12 +96,12 @@
             this.buscarProdutos();
         },
         methods: {
-            buscarProdutos: function () {
+            buscarProdutos: function (tipo) {
                 let self = this;
                 this.carregando = true;
                 let result = [];
 
-                axios.get('/api/produtos/produtos').then((response)=> {
+                axios.get('/api/produtos/produtos?tipo='+tipo).then((response)=> {
                     self.produtos = [];
                     result = response;
                     response.data.forEach(function(item) {
@@ -171,6 +174,17 @@
                         this.novoProduto.precounitario =
                             this.novoProduto.quantidade =
                                 this.novoProduto.precounitario  = '';
+            },
+            trocarProdutos: function () {
+                let tipo;
+
+                if (this.novoLancamento.tipo === 'E') {
+                    tipo = 'C';
+                } else {
+                    tipo = 'V';
+                }
+
+                this.buscarProdutos(tipo);
             }
         }
     }

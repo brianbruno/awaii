@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Housekeeping\Produto;
 use App\Produto;
 use App\Receita;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class ProdutoController {
@@ -19,8 +20,16 @@ class ProdutoController {
         return view('hk.produto.index', ['produtos' => Produto::all()]);
     }
 
-    public function getProdutosJson() {
-        return Produto::all();
+    public function getProdutosJson(Request $request) {
+
+        $tipo = $request->tipo;
+
+        if (empty($tipo))
+            $retorno = Produto::all();
+        else
+            $retorno = Produto::where('tipo', '=', $tipo)->get();
+
+        return $retorno;
     }
 
     public function getProdutoJson($cdproduto) {
@@ -132,5 +141,33 @@ class ProdutoController {
         }
 
         return $resultado;
+    }
+
+    public function getProdutosCaixa() {
+        $produtos = Produto::where('tipo', '=', 'V')->get();
+
+        $tela = array();
+        $nrProd = 0; // Contador do produto
+        $nrTela = 0; // Contador da tela
+
+        foreach ($produtos as $produto) {
+
+            $tela[$nrTela]['produtos'][] = array(
+                'nome'          => $produto->nmproduto,
+                'cdproduto'     => $produto->cdproduto,
+                'precounitario' => (float) $produto->preco,
+                'style'         => array('background-color' => '#e2deba')
+            );
+
+            $nrProd++;
+            if ($nrProd == 4) {
+                $tela[] = array(
+                    'produtos' => array()
+                );
+                $nrTela++;
+            }
+        }
+
+        return $tela;
     }
 }

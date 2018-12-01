@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 class ItemLancamento extends Model {
 
-    protected $appends = ['nmproduto', 'precof', 'unidadeLabel', 'dt_lancamento', 'dt_lancamentof'];
+    protected $appends = ['nmproduto', 'precof', 'unidadeLabel'];
 
     public function lancamento() {
         return $this->belongsTo(Lancamento::class, 'lancamento', 'id');
@@ -22,16 +22,8 @@ class ItemLancamento extends Model {
         return $this->produto()->get()[0]->nmproduto;
     }
 
-    public function getDt_lancamentoAttribute() {
-        return $this->lancamento()->get()[0]->dt_lancamento;
-    }
-
     public function getUnidadeLabelAttribute() {
         return $this->produto()->get()[0]->getUnidadeLabelAttribute();
-    }
-
-    public function getDt_lancamentofAttribute() {
-        return $this->produto()->get()[0]->getDt_lancamentofAttribute();
     }
 
     public function getPrecofAttribute() {

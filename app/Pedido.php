@@ -45,8 +45,8 @@ class Pedido extends ModelMPK {
         return DB::table('pedidos')
             ->select('clientes.nome as cliente_nome', 'clientes.telefone as cliente_telefone', 'pedidos.dt_pedido', DB::raw('DATE_FORMAT(pedidos.dt_pedido,\'%d/%m/%Y %H:%i:%s\') as dt_br'),
                             'pedidos.status', 'dt_pedido', 'unidades.id as unidade_id','unidades.nome as unidade_nome', 'pedidos.id as pedido_id',
-                            DB::raw('sum(item_pedidos.total) as total'))
-            ->join('clientes', 'pedidos.id_cliente', '=', 'clientes.id')
+                            DB::raw('sum(item_pedidos.total) as total'), DB::raw("format(sum(item_pedidos.total),2,'de_DE') as totalf"))
+            ->leftJoin('clientes', 'pedidos.id_cliente', '=', 'clientes.id')
             ->join('unidades', 'pedidos.unidade', '=', 'unidades.id')
             ->join('item_pedidos', 'pedidos.id', '=', 'item_pedidos.id_pedido')
             ->where('item_pedidos.unidade',  $unidade)

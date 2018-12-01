@@ -4,8 +4,13 @@
             :show="carregando"
             :label="label">
         </loading>
-        <estoque-nav></estoque-nav>
         <div class="card">
+            <div class="bg-dark">
+                <estoque-nav></estoque-nav>
+            </div>
+            <div class="card-header">
+                Lançamentos
+            </div>
             <div class="card-body table-responsive">
                 <table class="table table-hover">
                     <thead>

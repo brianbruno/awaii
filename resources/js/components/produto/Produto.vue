@@ -4,8 +4,13 @@
             :show="carregando"
             :label="label">
         </loading>
-        <produto-nav></produto-nav>
         <div class="card">
+            <div class="bg-dark">
+                <produto-nav></produto-nav>
+            </div>
+            <div class="card-header">
+                Produtos
+            </div>
             <div class="input-group">
                 <input type="text" v-model="busca" class="form-control form-control-lg" id="preco" placeholder="Buscar...">
                 <select id="tipo" v-model="tipo" class="form-control form-control-lg" v-on:change="filtrarProdutos">

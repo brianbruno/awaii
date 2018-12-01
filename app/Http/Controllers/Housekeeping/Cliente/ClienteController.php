@@ -62,4 +62,8 @@ class ClienteController {
 
         return view('hk.cliente.editar-cliente', ['resultado' => true, 'cliente' => $cliente]);
     }
+
+    public function getClientes() {
+        return Cliente::all();
+    }
 }

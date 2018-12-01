@@ -63,14 +63,25 @@ class EnviarRelatorios extends Command
             $bar->advance();
         }
 
-        Mail::to('contact@brian.place')->send(new MailRelatorios($arquivos));
+        try {
+            Mail::to('contact@brian.place')->send(new MailRelatorios($arquivos));
+        } catch (\Swift_TransportException $err) {
+            $this->info('');
+            $this->error('Ocorreu um erro ao conectar no servidor!');
+            $this->error($err->getMessage());
+        } catch (\Exception $err) {
+            $this->info('');
+            $this->error('Ocorreu um erro inesperado!');
+            $this->error($err->getMessage());
+        }
+
 
         foreach ($arquivos as $arquivo)
             Storage::delete($arquivo);
 
         $bar->finish();
         $this->info('');
-        $this->info('Operacao Realizada!');
+        $this->info('Operacao Finalizada!');
         $this->info('');
     }
 }

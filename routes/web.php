@@ -23,7 +23,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home')->middleware('auth', 'permissao');
 
-Route::namespace('Pedido')->group(function () {
+/*Route::namespace('Pedido')->group(function () {
 
     Route::get('api/pedido/json/{unidade?}', 'PedidoController@pedidosJson')->middleware('auth', 'permissao');
     Route::post('api/finalizar/json/{id}/{unidade?}', 'PedidoController@finalizarJson')->middleware('auth', 'permissao');
@@ -40,7 +40,7 @@ Route::namespace('Pedido')->group(function () {
 
     });
 
-});
+});*/
 
 Route::namespace('Producao')->group(function () {
 
@@ -71,6 +71,18 @@ Route::namespace('Housekeeping')->group(function () {
         Route::view('adicionar-licenca', 'hk.adicionar-licenca')->middleware('auth', 'permissao');
         Route::post('adicionar-licenca',  'UnidadeController@adicionarLicenca')->name('adicionar-licenca')->middleware('auth', 'permissao');
 
+        Route::namespace('Venda')->group(function () {
+
+            Route::prefix('vendas')->group(function () {
+
+                Route::get('/{vue_capture?}', function () {
+                    return view('hk.venda.index');
+                })->where('vue_capture', '[\/\w\.-]*');
+
+            });
+
+        });
+
         Route::namespace('Usuario')->group(function () {
 
             Route::prefix('usuarios')->group(function () {
@@ -91,9 +103,9 @@ Route::namespace('Housekeeping')->group(function () {
                     return view('hk.produto.componente-produto');
                 })->where('vue_capture', '[\/\w\.-]*');
 //                Route::get('', 'ProdutoController@index')->name('produtos');
-                Route::view('cadastro', 'hk.produto.cadastrar-produto');
-                Route::post('cadastro',  'ProdutoController@cadastrar')->name('cadastrar-produto');
-                Route::get('editar-produto/{id}', 'ProdutoController@indexEditar')->name('produto-id');
+//                Route::view('cadastro', 'hk.produto.cadastrar-produto');
+//                Route::post('cadastro',  'ProdutoController@cadastrar')->name('cadastrar-produto');
+//                Route::get('editar-produto/{id}', 'ProdutoController@indexEditar')->name('produto-id');
             });
 
         });
@@ -170,6 +182,10 @@ Route::group(['prefix' => 'api',  'middleware' => ['auth', 'permissao']], functi
                 Route::post('excluircomposicao', 'ProdutoController@excluirComposicaoProduto');
             });
 
+            Route::prefix('produtosjson')->group(function () {
+                Route::get('produtoscaixa', 'ProdutoController@getProdutosCaixa');
+            });
+
         });
 
         Route::namespace('Estoque')->group(function () {
@@ -178,11 +194,30 @@ Route::group(['prefix' => 'api',  'middleware' => ['auth', 'permissao']], functi
 
                 Route::get('movimentacoes', 'EstoqueController@getUltimasMovimentacoes');
                 Route::post('novolancamento', 'EstoqueController@novoLancamento');
-                Route::get('lancamento/{cdproduto}', 'EstoqueController@getLancamento');
+                Route::get('lancamento/{id}', 'EstoqueController@getLancamento');
                 Route::post('lancamento/excluirlancamento', 'EstoqueController@excluirLancamento');
             });
 
         });
+
+        Route::namespace('Cliente')->group(function () {
+
+            Route::prefix('cliente')->group(function () {
+
+                Route::get('clientes', 'ClienteController@getClientes');
+            });
+
+        });
+
+        Route::namespace('Pedido')->group(function () {
+
+            Route::prefix('pedido')->group(function () {
+                Route::post('novopedido', 'PedidoController@novoPedidoApi');
+                Route::get('json/{unidade?}', 'PedidoController@pedidosJson');
+            });
+
+        });
+
     });
 });
 

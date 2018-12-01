@@ -4,8 +4,11 @@
             :show="carregando"
             :label="label">
         </loading>
-        <estoque-nav></estoque-nav>
         <div class="card">
+            <div class="bg-dark"><estoque-nav></estoque-nav></div>
+            <div class="card-header">
+                Lançamento {{ lancamento.id }}
+            </div>
             <div class="card-body">
                 <h2>Lançamento {{ lancamento.id }}</h2>
                 <h4>Lançamento de {{ lancamento.tipoLabel }}</h4>
